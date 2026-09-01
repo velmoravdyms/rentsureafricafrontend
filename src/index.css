@@ -1,0 +1,218 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+
+}
+
+.map-container {
+  position:fixed;
+  right:2%;
+  top:70px;
+  color:blue;
+  background-color:whitesmoke;
+
+}
+
+.outside {
+  background-color:green;
+}
+
+
+
+/*Here is the beginning of meia querries*/
+.uploaddiv{
+  width:90%;
+  height:6.6rem;
+  text-align:center;
+  border:2px dashed grey; 
+  display:flex;
+  align-items:center; 
+  justify-content:center; 
+  flex-direction:column;
+}
+.uploadicon{
+  font-size:1.67rem;
+}
+.uploadhere{
+  font-size:1rem;
+}
+.pictype{
+font-size:1rem; 
+/* color:rgb(59, 57, 57); */
+}
+
+
+
+@media screen and (max-width:500px){  
+  .uploaddiv{
+    width:95%;
+    margin:0 auto;
+    text-align: center;
+    height:6.6rem;
+    border:2px dashed grey; 
+    display:flex;
+    align-items:center; 
+    justify-content:center; 
+    flex-direction:column;
+  }
+  .uploadicon{
+    width:25%;
+    font-size:1.6rem;
+  }
+  
+  .uploadhere{
+    
+    font-size:0.85rem;
+    
+  }
+  
+  .pictype{
+    font-size:0.85rem;
+    
+  }
+    
+  }
+
+  /* 
+  @media only screen and (min-width:501px) and (max-width:700px){  
+    .uploadicon{
+      margin:0 auto;
+      width:30%;
+      font-size:1.8rem;
+    }
+    
+    .uploadhere{
+      width:90%;
+      font-size:0.85rem;
+      margin:0 auto;
+    }
+    
+    .pictype{
+      width:90%;
+      font-size:0.85rem;
+      margin:0 auto;
+    }
+    
+  }
+  
+  @media only screen and (min-width:701px) and (max-width:900px){  
+    .uploadicon{
+      margin:0 auto;
+      width:20%;
+      font-size:1.9rem;
+    }
+    
+    .uploadhere{
+      width:90%;
+      font-size:1rem;
+      margin:0 auto;
+    }
+    
+    .pictype{
+      width:90%;
+      font-size:1rem;
+      margin:0 auto;
+    }
+    
+  }
+  
+  @media only screen and (min-width:901px) and (max-width:1200px){  
+    .uploadicon{
+      margin:0 auto;
+      width:20%;
+      font-size:1.6rem;
+    }
+    
+    .uploadhere{
+      width:60%;
+      font-size:1rem;
+      margin:0 auto;
+    }
+    
+    .pictype{
+      width:60%;
+      font-size:1rem;
+      margin:0 auto;
+    }
+    
+  } 
+  */
+
+/*******************************************************************************************************************8???///////////////////////
+
+
+
+@media only screen and (max-width:700px){  
+  .uploadicon{
+    margin:0 auto;
+    width:25%;
+    font-size:1.6rem;
+  }
+  
+  .uploadhere{
+    width:95%;
+    font-size:1rem;
+    margin:0 auto;
+  }
+  
+  .pictype{
+    width:95%;
+    font-size:1rem;
+    margin:0 auto;
+  }
+    
+  }
+
+
+
+@media only screen and (max-width:700px){  
+  .uploadicon{
+    margin:0 auto;
+    width:25%;
+    font-size:1.6rem;
+  }
+  
+  .uploadhere{
+    width:95%;
+    font-size:1rem;
+    margin:0 auto;
+  }
+  
+  .pictype{
+    width:95%;
+    font-size:1rem;
+    margin:0 auto;
+  }
+    
+  }
+
+
+@media only screen and (max-width:700px){  
+  .uploadicon{
+    margin:0 auto;
+    width:25%;
+    font-size:1.6rem;
+  }
+  
+  .uploadhere{
+    width:95%;
+    font-size:1rem;
+    margin:0 auto;
+  }
+  
+  .pictype{
+    width:95%;
+    font-size:1rem;
+    margin:0 auto;
+  }
+    
+  }
+  */
