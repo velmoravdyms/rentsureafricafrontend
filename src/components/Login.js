@@ -14,12 +14,7 @@ import {Link} from "react-router-dom"
 
 
 
-// const GlobalStyle= createGlobalStyle`
-//     html:{
-//         background-color:#F0ECF5;
-//     }
 
-// `
 // background-color:#F0ECF5;
 const Registrationcontainer=styled.div`
      background-color:#EFEBF3;
@@ -101,6 +96,10 @@ const Button=styled.button`
     border-radius:10px;
     border:none;
     font-size:1rem;
+        &:hover {
+        cursor: pointer;
+        background-color:darkgreen;
+    }
 `
 const Messagediv=styled.div`
     width:50%;
@@ -109,14 +108,73 @@ const Messagediv=styled.div`
 const Forgotpassdiv=styled.div`
 
 padding:0rem;
-margin:3rem 0 0 3rem;
+margin:1rem 0 0 10rem;
 
 `
-// margin:2rem 0rem 0rem 6rem;
-const Forgotpasslink=styled(Link)`
-margin-left:10rem;
-color:blue;
-`
+
+
+const BottomActions = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-bottom: 2rem;
+`;
+
+const Forgotpasslink = styled(Link)`
+    color: #0056b3;
+    font-size: 0.95rem;
+    text-decoration: underline;
+
+    &:hover {
+        color: #003d80;
+    }
+`;
+
+const SignupPromptDiv = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 80%;
+    padding-top: 1.5rem;
+    border-top: 1px solid #dcdcdc; /* Subtle separator line */
+`;
+
+const PromptText = styled.p`
+    margin: 0;
+    color: #555;
+    font-size: 0.95rem;
+`;
+
+const SignupButtonLink = styled(Link)`
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+        background-color: #003d80;
+        color: white;
+    }
+`;
+
+
+
+
+
+
+
+
+
+
+
 
 
 const Required=(value)=>{
@@ -243,74 +301,93 @@ const Login= ()=>{
 
 
 
-    return(
-
-            <Registrationcontainer>
+    return (
+        <Registrationcontainer>
             <Logincontainer>
-                <Iconimage >< FaUserCircle /></Iconimage>
-                
+                <Iconimage><FaUserCircle /></Iconimage>
+
                 {message && (
-                        <Messagediv style={{margin:"0.5rem auto", width:"90%", backgroundColor:`${messagecolor}`, color :"white", padding:"0.5rem" }}>
-                            <div >{message}</div>
-                        </Messagediv>
-
+                    <Messagediv style={{ margin: "0.5rem auto", width: "90%", backgroundColor: `${messagecolor}`, color: "white", padding: "0.5rem" }}>
+                        <div>{message}</div>
+                    </Messagediv>
                 )}
-                <Form method="" ref={form} onSubmit={handleLogin} >
-                    <Emaildiv>
-                        <Emailabel>Email:</ Emailabel >
-                        <Input type="text" name="email" placeholder="Johndoe23@gmail.com" value={email} onChange={emailChange} validations={[Required, IsEmail]} style={{width:"80%", height:"2rem", borderRadius:"10px", border:"none", fontSize:"1.2rem", color:"black"}}></Input>
-                    </Emaildiv>
 
+                <Form method="" ref={form} onSubmit={handleLogin}>
+                    <Emaildiv>
+                        <Emailabel>Email:</Emailabel>
+                        <Input
+                            type="text"
+                            name="email"
+                            placeholder="Johndoe23@gmail.com"
+                            value={email}
+                            onChange={emailChange}
+                            validations={[Required, IsEmail]}
+                            style={{ width: "80%", height: "2rem", borderRadius: "10px", border: "none", fontSize: "1.2rem", color: "black" }}
+                        />
+                    </Emaildiv>
 
                     <Passwordiv>
                         <Passwordlabel>Password:</Passwordlabel>
                         <Showpassdiv>
-
-                            <Input type={show ? "text" : "password" } name="password"  value={password} onChange={passwordChange} validations={[Required]} 
-                                style={{ borderRadius:"10px", width:"125%" , height:"2rem", fontSize:"1rem",
-                                border:"none", color: "black"}}>
-                              {/* onMouseDown={handleMouseDownPassword} */}
-                            </Input>
-                            <IconButton onClick={handleClickShowPassword} >
-                                  {show ? <BsIcons.BsEye /> :  <BsIcons.BsEyeSlash/>}
+                            <Input
+                                type={show ? "text" : "password"}
+                                name="password"
+                                value={password}
+                                onChange={passwordChange}
+                                validations={[Required]}
+                                style={{
+                                    borderRadius: "10px",
+                                    width: "125%",
+                                    height: "2rem",
+                                    fontSize: "1rem",
+                                    border: "none",
+                                    color: "black"
+                                }}
+                            />
+                            <IconButton onClick={handleClickShowPassword}>
+                                {show ? <BsIcons.BsEye /> : <BsIcons.BsEyeSlash />}
                             </IconButton>
-
                         </Showpassdiv>
-
-
-                     
                     </Passwordiv>
 
-
                     <FormButtondiv>
-                        <Button disabled={loading} > 
-                        {loading ? (
-                            <SpanIcon ><LoadingIcons.SpinningCircles style={{height:"1.5rem"}} /></SpanIcon>
-
-                            
-                        ):
-                        (
-                            <Spanbutton>SIGN IN</Spanbutton>
-                        )}
-                        
+                        <Button disabled={loading}>
+                            {loading ? (
+                                <SpanIcon><LoadingIcons.SpinningCircles style={{ height: "1.5rem" }} /></SpanIcon>
+                            ) : (
+                                <Spanbutton>SIGN IN</Spanbutton>
+                            )}
                         </Button>
-
                     </FormButtondiv>
-                 
-                    <CheckButton style={{display:"none"}} ref={checkbtn}/>
+
+                    <CheckButton style={{ display: "none" }} ref={checkbtn} />
                 </Form>
 
-            <Forgotpassdiv><Forgotpasslink  to="/passwordreset">Forgot Password?</Forgotpasslink></Forgotpassdiv>
+                <Forgotpassdiv>
+                    <Forgotpasslink to="/passwordreset">Forgot Password?</Forgotpasslink>
+                </Forgotpassdiv>
+
+
+
+
+                {/* <CheckButton style={{ display: "none" }} ref={checkbtn} /> */}
+
+                <BottomActions>
+                    {/* <Forgotpasslink to="/passwordreset">Forgot Password?</Forgotpasslink> */}
+                    
+                    <SignupPromptDiv>
+                        <PromptText>Don't have an account?</PromptText>
+                        <SignupButtonLink to="/signup">SIGN UP</SignupButtonLink>
+                    </SignupPromptDiv>
+                </BottomActions>
+
+                            
+
+
+
+
             </Logincontainer>
-
-
-
         </Registrationcontainer>
-        
-
-
-
-        
     )
 }
 
