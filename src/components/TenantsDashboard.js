@@ -626,7 +626,8 @@ const TenantsDashboard = () => {
         <Logodiv>
           <Logo>
           {/* <img style={{height:"51px", width:'100%'}} src={logo} alt="Logo Goes Here" />  */}
-            Easy Clicks PMS 
+            {/* Easy Clicks PMS  */}
+            RentSure  PMSAfrica
           </Logo>
         </Logodiv>
      
