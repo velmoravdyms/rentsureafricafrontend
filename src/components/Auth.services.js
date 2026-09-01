@@ -4,12 +4,22 @@ import axios from "axios";
 // import api from './axiosconfig';
 // import { setTokens, clearTokens } from './tokenUtils';
 
-const url= "http://localhost:8000/o/auth/"
-    // const url= "http://3.76.31.239:8000/o/auth/" 
+// const url= "http://localhost:8000/o/auth/";
+//https://rentsureafricabackend.onrender.com
 
-    //const url= "https://property-management-software.herokuapp.com/o/auth/"
+// Get base URL dynamically based on environment
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-    // , {headers:{authorization:`bearer${token}`}
+// Construct your auth endpoint
+const url = `${BASE_URL}/o/auth/`;
+
+
+
+
+
+
+
+
    
     const login=(email, password)=>{
 
