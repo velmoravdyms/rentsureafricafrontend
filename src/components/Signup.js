@@ -89,45 +89,70 @@ const Spanbutton=styled.div`
 const Button=styled.button`
     width:50%;
     margin: 0 auto;
-    background-color:green;
+    background-color:darkblue;
     color: white;
     text-align:center;
     padding:0.5rem;
     border-radius:10px;
     border:none;
     font-size:1rem;
+      &:hover {
+        background-color: blue;
+        cursor:pointer;
+    }
+    font-size:1rem; 
+    font-weight: 600;
+
 `
 const Messagediv=styled.div`
     width:50%;
     
 `
-const Logindiv=styled.div`
 
-    color:white;
-    padding:0.3rem;
-  
-    border:none;
-   
-    font-size:0.9rem;
-    margin: 1.5     rem 0 0 0rem;
 
-`
-const Loginbutton=styled.button`
-    border:none;
-    width:30%;
-    padding:0.4rem;
-    border-radius:9px;
-    background-color: blue;
-    `
-    // margin-left:15rem;
-    // color:white;
-    // width:5.5rem;
-    const Loginlink=styled(Link)`
- 
-    text-decoration:none;
-    color:white;
- 
-`
+
+
+
+
+
+const Logindiv = styled.div`
+    padding: 1.5rem 2rem 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin:1.2rem 0;
+`;
+
+const Logintext = styled.span`
+    font-size: 0.95rem;
+    color: #555;
+    font-weight: 500;
+`;
+
+const Loginbutton = styled.button`
+    background-color: #28a745; /* Green to match Sign-In action */
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+        background-color: #218838;
+    }
+`;
+
+const Loginlink = styled(Link)`
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+`;
+
+
+
 
 const Required=(value)=>{
     if(!value)
@@ -304,9 +329,18 @@ export const Signup= ()=>{
                     <CheckButton style={{display:"none"}} ref={checkbtn}/>
                 </Form>
             
-            <Logindiv> <Loginbutton><Loginlink  to="/signin " >SIGN IN </Loginlink></Loginbutton>    </Logindiv>   
-            </Logincontainer>
+            {/* <Logindiv> <Loginbutton><Loginlink  to="/signin " >SIGN IN </Loginlink></Loginbutton>    </Logindiv>    */}
 
+
+
+            <Logindiv>
+                <Logintext>Already have an account?</Logintext>
+                <Loginbutton>
+                    <Loginlink to="/signin">SIGN IN</Loginlink>
+                </Loginbutton>
+            </Logindiv>
+
+        </Logincontainer>
 
         </Registrationcontainer>
         
