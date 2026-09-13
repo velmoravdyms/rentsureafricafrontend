@@ -913,10 +913,1711 @@
 
 
 
+// import React, {
+//   createContext,
+//   useEffect,
+//   useState,
+// } from "react";
+
+// import styled from "@emotion/styled";
+
+// import {
+//   VscMenu,
+// } from "react-icons/vsc";
+
+// import * as MdIcons from "react-icons/md";
+// import * as RiIcons from "react-icons/ri";
+
+// import {
+//   FaUserCircle,
+// } from "react-icons/fa";
+
+// import {
+//   Link,
+//   Outlet,
+//   useLocation,
+// } from "react-router-dom";
+
+// import {
+//   decodeToken,
+// } from "react-jwt";
+
+// import Tenantsidebardata from "./Tenantsidebardata";
+
+// /* =========================================================
+//    CONSTANTS
+// ========================================================= */
+
+// const HEADER_HEIGHT = 58;
+
+// const SIDEBAR_EXPANDED = 260;
+
+// const SIDEBAR_COLLAPSED = 68;
+
+// const MOBILE_BREAKPOINT = 768;
+
+
+// /* =========================================================
+//    MAIN APP WRAPPER
+// ========================================================= */
+
+// const King = styled.div`
+//   min-height: 100vh;
+//   width: 100%;
+
+//   background: #f8f8f8;
+
+//   overflow-x: hidden;
+// `;
+
+
+// /* =========================================================
+//    NAVIGATION HEADER
+// ========================================================= */
+
+// const Navigation = styled.header`
+//   position: fixed;
+
+//   top: 0;
+//   left: 0;
+//   right: 0;
+
+//   width: 100%;
+//   height: ${HEADER_HEIGHT}px;
+
+//   z-index: 1000;
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+
+//   background: black;
+
+//   color: violet;
+
+//   box-sizing: border-box;
+// `;
+
+
+// /* =========================================================
+//    HEADER LEFT SIDE
+// ========================================================= */
+
+// const NavLeft = styled.div`
+//   height: 100%;
+
+//   display: flex;
+//   align-items: center;
+
+//   min-width: 0;
+// `;
+
+
+// /* =========================================================
+//    MENU BUTTON
+// ========================================================= */
+
+// const Naviconburger = styled.button`
+//   width: ${HEADER_HEIGHT}px;
+//   height: ${HEADER_HEIGHT}px;
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+
+//   flex-shrink: 0;
+
+//   border: none;
+//   outline: none;
+
+//   background: transparent;
+
+//   color: violet;
+
+//   font-size: 2rem;
+
+//   cursor: pointer;
+
+//   &:hover {
+//     background: #222;
+//   }
+
+//   &:active {
+//     background: #333;
+//   }
+// `;
+
+
+// /* =========================================================
+//    LOGO
+// ========================================================= */
+
+// const Logodiv = styled.div`
+//   font-size: 1.5rem;
+
+//   font-weight: 500;
+
+//   color: violet;
+
+//   white-space: nowrap;
+
+//   overflow: hidden;
+
+//   text-overflow: ellipsis;
+
+//   @media (max-width: 767px) {
+//     font-size: 1.05rem;
+
+//     max-width: 180px;
+//   }
+
+//   @media (max-width: 400px) {
+//     font-size: 0.95rem;
+
+//     max-width: 145px;
+//   }
+// `;
+
+
+// /* =========================================================
+//    REGISTER BUTTONS
+// ========================================================= */
+
+// const Registerdiv = styled.div`
+//   display: flex;
+
+//   align-items: center;
+
+//   gap: 8px;
+
+//   margin-right: 20px;
+
+//   @media (max-width: 767px) {
+//     margin-right: 8px;
+
+//     a:first-child {
+//       display: none;
+//     }
+//   }
+// `;
+
+
+// const SignIn = styled.button`
+//   font-size: 0.85rem;
+
+//   color: white;
+
+//   border: none;
+
+//   font-weight: bold;
+
+//   padding: 8px 12px;
+
+//   background-color: green;
+
+//   border-radius: 7px;
+
+//   cursor: pointer;
+// `;
+
+
+// const SignUp = styled.button`
+//   font-size: 0.85rem;
+
+//   padding: 8px 12px;
+
+//   color: white;
+
+//   background-color: blue;
+
+//   border: none;
+
+//   cursor: pointer;
+
+//   border-radius: 7px;
+
+//   font-weight: bold;
+// `;
+
+
+// /* =========================================================
+//    PROFILE
+// ========================================================= */
+
+// const Wholeprofile = styled.div`
+//   position: relative;
+
+//   height: 100%;
+
+//   margin-right: 18px;
+
+//   @media (max-width: 767px) {
+//     margin-right: 5px;
+//   }
+// `;
+
+
+// const Profileshow = styled.button`
+//   height: ${HEADER_HEIGHT}px;
+
+//   display: flex;
+
+//   align-items: center;
+
+//   gap: 7px;
+
+//   padding: 0 8px;
+
+//   color: violet;
+
+//   background: transparent;
+
+//   border: none;
+
+//   outline: none;
+
+//   cursor: pointer;
+
+//   &:hover {
+//     background: #222;
+//   }
+// `;
+
+
+// const Showusername = styled.span`
+//   max-width: 180px;
+
+//   overflow: hidden;
+
+//   text-overflow: ellipsis;
+
+//   white-space: nowrap;
+
+//   @media (max-width: 767px) {
+//     display: none;
+//   }
+// `;
+
+
+// const Iconimage = styled.span`
+//   display: flex;
+
+//   align-items: center;
+
+//   font-size: 1.35rem;
+// `;
+
+
+// /* =========================================================
+//    PROFILE DROPDOWN
+// ========================================================= */
+
+// const Profilehide = styled.div`
+//   position: absolute;
+
+//   right: 0;
+
+//   top: ${HEADER_HEIGHT}px;
+
+//   min-width: 220px;
+
+//   background: #111;
+
+//   border: 1px solid #333;
+
+//   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+//   z-index: 2000;
+
+//   @media (max-width: 767px) {
+//     min-width: 205px;
+//   }
+// `;
+
+
+// const Settingrow = styled(Link)`
+//   display: flex;
+
+//   align-items: center;
+
+//   gap: 10px;
+
+//   padding: 12px 14px;
+
+//   color: white;
+
+//   text-decoration: none;
+
+//   &:hover {
+//     background: #333;
+//   }
+// `;
+
+
+// const Icons = styled.span`
+//   display: flex;
+
+//   align-items: center;
+
+//   justify-content: center;
+
+//   font-size: 1.15rem;
+
+//   flex-shrink: 0;
+// `;
+
+
+// /* =========================================================
+//    MOBILE OVERLAY
+// ========================================================= */
+
+// const Overlay = styled.div`
+//   display: none;
+
+//   @media (max-width: 767px) {
+//     display: ${({ open }) =>
+//       open ? "block" : "none"};
+
+//     position: fixed;
+
+//     top: ${HEADER_HEIGHT}px;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+
+//     z-index: 900;
+
+//     background: rgba(0, 0, 0, 0.55);
+//   }
+// `;
+
+
+// /* =========================================================
+//    SIDEBAR
+// ========================================================= */
+
+// const SidebarNav = styled.aside`
+//   position: fixed;
+
+//   top: ${HEADER_HEIGHT}px;
+
+//   left: 0;
+
+//   bottom: 0;
+
+//   width: ${({ collapsed }) =>
+//     collapsed
+//       ? `${SIDEBAR_COLLAPSED}px`
+//       : `${SIDEBAR_EXPANDED}px`};
+
+//   z-index: 950;
+
+//   background: black;
+
+//   color: white;
+
+//   overflow-x: hidden;
+
+//   overflow-y: auto;
+
+//   box-sizing: border-box;
+
+//   transition: width 0.2s ease;
+
+//   &::-webkit-scrollbar {
+//     width: 7px;
+//   }
+
+//   &::-webkit-scrollbar-track {
+//     background: #111;
+//   }
+
+//   &::-webkit-scrollbar-thumb {
+//     background: #555;
+
+//     border-radius: 20px;
+//   }
+
+//   @media (max-width: 767px) {
+//     width: min(290px, 82vw);
+
+//     transform: ${({ mobileOpen }) =>
+//       mobileOpen
+//         ? "translateX(0)"
+//         : "translateX(-105%)"};
+
+//     transition:
+//       transform 0.25s ease;
+
+//     box-shadow: ${({ mobileOpen }) =>
+//       mobileOpen
+//         ? "8px 0 30px rgba(0,0,0,0.45)"
+//         : "none"};
+//   }
+// `;
+
+
+// /* =========================================================
+//    MENU
+// ========================================================= */
+
+// const MenuItem = styled.div`
+//   width: 100%;
+// `;
+
+
+// const MainMenu = styled.div`
+//   min-height: 52px;
+
+//   width: 100%;
+
+//   display: flex;
+
+//   align-items: center;
+
+//   color: white;
+
+//   cursor: pointer;
+
+//   box-sizing: border-box;
+
+//   &:hover {
+//     background: #222;
+//   }
+// `;
+
+
+// const MainMenuLink = styled(Link)`
+//   min-height: 52px;
+
+//   width: 100%;
+
+//   display: flex;
+
+//   align-items: center;
+
+//   color: white;
+
+//   text-decoration: none;
+
+//   box-sizing: border-box;
+
+//   &:hover {
+//     background: #222;
+//   }
+// `;
+
+
+// /* =========================================================
+//    MENU ICON
+// ========================================================= */
+
+// const IconBox = styled.span`
+//   width: ${SIDEBAR_COLLAPSED}px;
+
+//   min-width: ${SIDEBAR_COLLAPSED}px;
+
+//   display: flex;
+
+//   align-items: center;
+
+//   justify-content: center;
+
+//   font-size: 1.4rem;
+
+//   color: violet;
+
+//   @media (max-width: 767px) {
+//     width: 55px;
+
+//     min-width: 55px;
+//   }
+// `;
+
+
+// /* =========================================================
+//    MENU TITLE
+// ========================================================= */
+
+// const MenuTitle = styled.span`
+//   flex: 1;
+
+//   font-size: 1rem;
+
+//   color: white;
+
+//   white-space: nowrap;
+
+//   overflow: hidden;
+
+//   text-overflow: ellipsis;
+// `;
+
+
+// /* =========================================================
+//    MENU ARROW
+// ========================================================= */
+
+// const ArrowBox = styled.span`
+//   display: flex;
+
+//   align-items: center;
+
+//   justify-content: center;
+
+//   padding-right: 15px;
+
+//   color: violet;
+
+//   font-size: 1.1rem;
+// `;
+
+
+// /* =========================================================
+//    SUBMENU
+// ========================================================= */
+
+// const Submenu = styled.div`
+//   background: #111;
+
+//   width: 100%;
+// `;
+
+
+// const SubmenuLink = styled(Link)`
+//   min-height: 44px;
+
+//   display: flex;
+
+//   align-items: center;
+
+//   padding: 8px 14px 8px 70px;
+
+//   color: violet;
+
+//   text-decoration: none;
+
+//   font-size: 0.95rem;
+
+//   white-space: nowrap;
+
+//   box-sizing: border-box;
+
+//   &:hover {
+//     background: blue;
+
+//     color: white;
+//   }
+
+//   @media (max-width: 767px) {
+//     min-height: 48px;
+
+//     padding-left: 55px;
+
+//     font-size: 0.95rem;
+//   }
+// `;
+
+
+// /* =========================================================
+//    COLLAPSED DESKTOP POPUP
+// ========================================================= */
+
+// const HoverPopup = styled.div`
+//   position: fixed;
+
+//   top: ${({ top }) => `${top}px`};
+
+//   left: ${SIDEBAR_COLLAPSED + 4}px;
+
+//   min-width: 220px;
+
+//   background: #111;
+
+//   border: 1px solid #333;
+
+//   z-index: 2000;
+
+//   box-shadow:
+//     0 8px 25px rgba(0, 0, 0, 0.4);
+
+//   @media (max-width: 767px) {
+//     display: none;
+//   }
+// `;
+
+
+// const PopupTitle = styled.div`
+//   padding: 11px 14px;
+
+//   color: white;
+
+//   background: blue;
+
+//   font-weight: bold;
+// `;
+
+
+// const PopupLink = styled(Link)`
+//   display: flex;
+
+//   align-items: center;
+
+//   padding: 11px 14px;
+
+//   color: violet;
+
+//   text-decoration: none;
+
+//   &:hover {
+//     background: blue;
+
+//     color: white;
+//   }
+// `;
+
+
+// /* =========================================================
+//    MAIN CONTENT
+// ========================================================= */
+
+// const MainContent = styled.main`
+//   min-height:
+//     calc(100vh - ${HEADER_HEIGHT}px);
+
+//   margin-left: ${({ collapsed }) =>
+//     collapsed
+//       ? `${SIDEBAR_COLLAPSED}px`
+//       : `${SIDEBAR_EXPANDED}px`};
+
+//   padding-top: ${HEADER_HEIGHT}px;
+
+//   box-sizing: border-box;
+
+//   transition:
+//     margin-left 0.2s ease;
+
+//   @media (max-width: 767px) {
+//     margin-left: 0;
+
+//     width: 100%;
+
+//     padding-top: ${HEADER_HEIGHT}px;
+//   }
+// `;
+
+
+// /* =========================================================
+//    PAGE CONTENT
+// ========================================================= */
+
+// const ContentInner = styled.div`
+//   min-height:
+//     calc(100vh - ${HEADER_HEIGHT}px);
+
+//   margin: 8px;
+
+//   padding: 20px;
+
+//   background: white;
+
+//   border-radius: 20px;
+
+//   box-sizing: border-box;
+
+//   overflow-x: auto;
+
+//   @media (max-width: 767px) {
+//     margin: 0;
+
+//     padding: 14px;
+
+//     border-radius: 0;
+
+//     min-height:
+//       calc(100vh - ${HEADER_HEIGHT}px);
+//   }
+// `;
+
+
+// /* =========================================================
+//    DESKTOP COLLAPSE BUTTON
+// ========================================================= */
+
+// const DesktopCollapseButton = styled.button`
+//   position: fixed;
+
+//   left: ${({ collapsed }) =>
+//     collapsed
+//       ? `${SIDEBAR_COLLAPSED}px`
+//       : `${SIDEBAR_EXPANDED}px`};
+
+//   top: 42%;
+
+//   width: 20px;
+
+//   height: 90px;
+
+//   z-index: 980;
+
+//   display: flex;
+
+//   align-items: center;
+
+//   justify-content: center;
+
+//   border: none;
+
+//   border-radius:
+//     0 8px 8px 0;
+
+//   background: purple;
+
+//   color: white;
+
+//   cursor: pointer;
+
+//   transition:
+//     left 0.2s ease;
+
+//   @media (max-width: 767px) {
+//     display: none;
+//   }
+// `;
+
+
+// /* =========================================================
+//    CONTEXT
+// ========================================================= */
+
+// export const Sharesidebar =
+//   createContext();
+
+
+// /* =========================================================
+//    TENANT DASHBOARD
+// ========================================================= */
+
+// const TenantsDashboard = () => {
+
+//   /*
+//     IMPORTANT:
+
+//     false = expanded desktop sidebar
+
+//     true = collapsed desktop sidebar
+
+//     This keeps the same meaning as your
+//     existing Sharesidebar context.
+//   */
+
+//   const [sidebar, setSidebar] =
+//     useState(false);
+
+//   const [mobileOpen, setMobileOpen] =
+//     useState(false);
+
+//   const [submenu, setSubmenu] =
+//     useState(null);
+
+//   const [showProfile, setShowProfile] =
+//     useState(false);
+
+//   const [isMobile, setIsMobile] =
+//     useState(
+//       typeof window !== "undefined"
+//         ? window.innerWidth < MOBILE_BREAKPOINT
+//         : false
+//     );
+
+//   const [isloggedin, setLoggedIn] =
+//     useState(false);
+
+//   const [username, setUsername] =
+//     useState("");
+
+//   const location = useLocation();
+
+
+//   /* =======================================================
+//      RESPONSIVE SCREEN DETECTION
+//   ======================================================= */
+
+//   useEffect(() => {
+
+//     const handleResize = () => {
+
+//       const mobile =
+//         window.innerWidth <
+//         MOBILE_BREAKPOINT;
+
+//       setIsMobile(mobile);
+
+//       /*
+//         When returning to desktop,
+//         close the mobile drawer.
+//       */
+
+//       if (!mobile) {
+//         setMobileOpen(false);
+//       }
+//     };
+
+
+//     handleResize();
+
+//     window.addEventListener(
+//       "resize",
+//       handleResize
+//     );
+
+
+//     return () => {
+
+//       window.removeEventListener(
+//         "resize",
+//         handleResize
+//       );
+
+//     };
+
+//   }, []);
+
+
+//   /* =======================================================
+//      CLOSE MOBILE MENU AFTER ROUTE CHANGE
+//   ======================================================= */
+
+//   useEffect(() => {
+
+//     setMobileOpen(false);
+
+//     setShowProfile(false);
+
+//     setSubmenu(null);
+
+//   }, [location.pathname]);
+
+
+//   /* =======================================================
+//      AUTHENTICATION
+//   ======================================================= */
+
+//   useEffect(() => {
+
+//     const token =
+//       localStorage.getItem(
+//         "accessToken"
+//       );
+
+
+//     if (!token) {
+
+//       setLoggedIn(false);
+
+//       window.location.href =
+//         "/signin";
+
+//       return;
+//     }
+
+
+//     try {
+
+//       const decoded =
+//         decodeToken(token);
+
+
+//       const email =
+//         decoded?.user?.email;
+
+
+//       if (email) {
+
+//         setLoggedIn(true);
+
+
+//         const name =
+//           email.substring(
+//             0,
+//             email.lastIndexOf("@")
+//           );
+
+
+//         setUsername(name);
+
+//       } else {
+
+//         setLoggedIn(false);
+
+//       }
+
+//     } catch (error) {
+
+//       console.error(
+//         "Invalid access token:",
+//         error
+//       );
+
+//       setLoggedIn(false);
+
+//     }
+
+//   }, []);
+
+
+//   /* =======================================================
+//      TOGGLE SIDEBAR
+//   ======================================================= */
+
+//   const toggleSidebar = () => {
+
+//     if (isMobile) {
+
+//       setMobileOpen(
+//         previous =>
+//           !previous
+//       );
+
+//       return;
+//     }
+
+
+//     setSidebar(
+//       previous =>
+//         !previous
+//     );
+
+
+//     setSubmenu(null);
+
+//   };
+
+
+//   /* =======================================================
+//      SUBMENU
+//   ======================================================= */
+
+//   const toggleSubmenu = index => {
+
+//     if (submenu === index) {
+
+//       setSubmenu(null);
+
+//     } else {
+
+//       setSubmenu(index);
+
+//     }
+
+//   };
+
+
+//   /* =======================================================
+//      PROFILE
+//   ======================================================= */
+
+//   const toggleProfile = () => {
+
+//     setShowProfile(
+//       previous =>
+//         !previous
+//     );
+
+//   };
+
+
+//   /* =======================================================
+//      LOGOUT
+//   ======================================================= */
+
+//   const handleLogout = () => {
+
+//     localStorage.removeItem(
+//       "accessToken"
+//     );
+
+//     localStorage.removeItem(
+//       "refreshToken"
+//     );
+
+
+//     window.location.href =
+//       "/signin";
+
+//   };
+
+
+//   /* =======================================================
+//      RENDER MENU
+//   ======================================================= */
+
+//   const renderMenu = () => {
+
+//     return Tenantsidebardata.map(
+//       (menu, index) => {
+
+//         const hasSubmenu =
+//           Array.isArray(
+//             menu.submenu
+//           ) &&
+//           menu.submenu.length > 0;
+
+
+//         const isOpen =
+//           submenu === index;
+
+
+//         /*
+//           ================================================
+//           COLLAPSED DESKTOP
+//           ================================================
+//         */
+
+//         if (
+//           !isMobile &&
+//           sidebar
+//         ) {
+
+//           return (
+
+//             <MenuItem
+//               key={index}
+
+//               onMouseEnter={() => {
+
+//                 if (hasSubmenu) {
+
+//                   setSubmenu(index);
+
+//                 }
+
+//               }}
+
+//               onMouseLeave={() => {
+
+//                 if (hasSubmenu) {
+
+//                   setSubmenu(null);
+
+//                 }
+
+//               }}
+//             >
+
+//               {hasSubmenu ? (
+
+//                 <>
+
+//                   <MainMenu>
+
+//                     <IconBox>
+//                       {menu.icon}
+//                     </IconBox>
+
+//                   </MainMenu>
+
+
+//                   {isOpen && (
+
+//                     <HoverPopup
+//                       top={
+//                         HEADER_HEIGHT +
+//                         index * 52
+//                       }
+
+//                       onMouseEnter={() =>
+//                         setSubmenu(
+//                           index
+//                         )
+//                       }
+
+//                       onMouseLeave={() =>
+//                         setSubmenu(
+//                           null
+//                         )
+//                       }
+//                     >
+
+//                       <PopupTitle>
+//                         {menu.title}
+//                       </PopupTitle>
+
+
+//                       {menu.submenu.map(
+//                         (
+//                           dropdownmenu,
+//                           subIndex
+//                         ) => (
+
+//                           <PopupLink
+//                             key={
+//                               subIndex
+//                             }
+
+//                             to={
+//                               dropdownmenu.path
+//                             }
+//                           >
+
+//                             {dropdownmenu.icon && (
+
+//                               <span
+//                                 style={{
+//                                   marginRight:
+//                                     "8px",
+
+//                                   display:
+//                                     "flex",
+//                                 }}
+//                               >
+//                                 {
+//                                   dropdownmenu.icon
+//                                 }
+//                               </span>
+
+//                             )}
+
+//                             {
+//                               dropdownmenu.title
+//                             }
+
+//                           </PopupLink>
+
+//                         )
+//                       )}
+
+//                     </HoverPopup>
+
+//                   )}
+
+//                 </>
+
+//               ) : (
+
+//                 <MainMenuLink
+//                   to={menu.path}
+//                 >
+
+//                   <IconBox>
+//                     {menu.icon}
+//                   </IconBox>
+
+//                 </MainMenuLink>
+
+//               )}
+
+//             </MenuItem>
+
+//           );
+
+//         }
+
+
+//         /*
+//           ================================================
+//           EXPANDED DESKTOP + MOBILE
+//           ================================================
+//         */
+
+//         return (
+
+//           <MenuItem
+//             key={index}
+//           >
+
+//             {hasSubmenu ? (
+
+//               <MainMenu
+//                 onClick={() =>
+//                   toggleSubmenu(
+//                     index
+//                   )
+//                 }
+//               >
+
+//                 <IconBox>
+//                   {menu.icon}
+//                 </IconBox>
+
+
+//                 <MenuTitle>
+//                   {menu.title}
+//                 </MenuTitle>
+
+
+//                 <ArrowBox>
+
+//                   {isOpen
+
+//                     ? menu.iconOpen ||
+//                       (
+//                         <MdIcons.MdExpandLess />
+//                       )
+
+//                     : menu.iconClosed ||
+//                       (
+//                         <MdIcons.MdExpandMore />
+//                       )
+
+//                   }
+
+//                 </ArrowBox>
+
+//               </MainMenu>
+
+//             ) : (
+
+//               <MainMenuLink
+//                 to={menu.path}
+
+//                 onClick={() => {
+
+//                   if (isMobile) {
+
+//                     setMobileOpen(
+//                       false
+//                     );
+
+//                   }
+
+//                 }}
+//               >
+
+//                 <IconBox>
+//                   {menu.icon}
+//                 </IconBox>
+
+
+//                 <MenuTitle>
+//                   {menu.title}
+//                 </MenuTitle>
+
+//               </MainMenuLink>
+
+//             )}
+
+
+//             {hasSubmenu &&
+//               isOpen && (
+
+//                 <Submenu>
+
+//                   {menu.submenu.map(
+//                     (
+//                       dropdownmenu,
+//                       subIndex
+//                     ) => (
+
+//                       <SubmenuLink
+//                         key={
+//                           subIndex
+//                         }
+
+//                         to={
+//                           dropdownmenu.path
+//                         }
+
+//                         onClick={() => {
+
+//                           if (
+//                             isMobile
+//                           ) {
+
+//                             setMobileOpen(
+//                               false
+//                             );
+
+//                           }
+
+//                         }}
+//                       >
+
+//                         {dropdownmenu.icon && (
+
+//                           <span
+//                             style={{
+//                               marginRight:
+//                                 "8px",
+
+//                               display:
+//                                 "flex",
+//                             }}
+//                           >
+//                             {
+//                               dropdownmenu.icon
+//                             }
+//                           </span>
+
+//                         )}
+
+//                         {
+//                           dropdownmenu.title
+//                         }
+
+//                       </SubmenuLink>
+
+//                     )
+//                   )}
+
+//                 </Submenu>
+
+//               )}
+
+//           </MenuItem>
+
+//         );
+
+//       }
+//     );
+
+//   };
+
+
+//   /* =======================================================
+//      RENDER
+//   ======================================================= */
+
+//   return (
+
+//     <King>
+
+//       {/* =================================================
+//           HEADER
+//       ================================================= */}
+
+//       <Navigation>
+
+//         <NavLeft>
+
+//           <Naviconburger
+//             type="button"
+
+//             onClick={
+//               toggleSidebar
+//             }
+
+//             aria-label="Toggle navigation"
+//           >
+
+//             {isMobile
+
+//               ? (
+
+//                 mobileOpen
+
+//                   ? (
+//                     <MdIcons.MdClose />
+//                   )
+
+//                   : (
+//                     <VscMenu />
+//                   )
+
+//               )
+
+//               : (
+
+//                 sidebar
+
+//                   ? (
+//                     <VscMenu />
+//                   )
+
+//                   : (
+//                     <MdIcons.MdOutlineClose />
+//                   )
+
+//               )
+
+//             }
+
+//           </Naviconburger>
+
+
+//           <Logodiv>
+//             RentSure PMSAfrica
+//           </Logodiv>
+
+//         </NavLeft>
+
+
+//         {/* =================================================
+//             PROFILE
+//         ================================================= */}
+
+//         {isloggedin ? (
+
+//           <Wholeprofile>
+
+//             <Profileshow
+//               type="button"
+
+//               onClick={
+//                 toggleProfile
+//               }
+
+//               onMouseEnter={() => {
+
+//                 if (!isMobile) {
+
+//                   setShowProfile(
+//                     true
+//                   );
+
+//                 }
+
+//               }}
+
+//               aria-label="User menu"
+//             >
+
+//               <Iconimage>
+
+//                 <FaUserCircle />
+
+//               </Iconimage>
+
+
+//               <Showusername>
+//                 {username}
+//               </Showusername>
+
+
+//               <MdIcons.MdExpandMore />
+
+//             </Profileshow>
+
+
+//             {showProfile && (
+
+//               <Profilehide>
+
+//                 <Settingrow to="#">
+
+//                   <Icons>
+//                     <RiIcons.RiUserSettingsLine />
+//                   </Icons>
+
+//                   My Account Settings
+
+//                 </Settingrow>
+
+
+//                 <Settingrow to="#">
+
+//                   <Icons>
+//                     <RiIcons.RiTeamLine />
+//                   </Icons>
+
+//                   My Team Members
+
+//                 </Settingrow>
+
+
+//                 <Settingrow to="#">
+
+//                   <Icons>
+//                     <MdIcons.MdSupportAgent />
+//                   </Icons>
+
+//                   Help and Support
+
+//                 </Settingrow>
+
+
+//                 <Settingrow
+//                   to="/signin"
+//                   onClick={
+//                     handleLogout
+//                   }
+//                 >
+
+//                   <Icons>
+//                     <MdIcons.MdPowerSettingsNew />
+//                   </Icons>
+
+//                   Log Out
+
+//                 </Settingrow>
+
+//               </Profilehide>
+
+//             )}
+
+//           </Wholeprofile>
+
+//         ) : (
+
+//           <Registerdiv>
+
+//             <Link to="/signin">
+
+//               <SignIn>
+//                 SIGN IN
+//               </SignIn>
+
+//             </Link>
+
+
+//             <Link to="/signup">
+
+//               <SignUp>
+//                 SIGN UP
+//               </SignUp>
+
+//             </Link>
+
+//           </Registerdiv>
+
+//         )}
+
+//       </Navigation>
+
+
+//       {/* =================================================
+//           MOBILE OVERLAY
+//       ================================================= */}
+
+//       <Overlay
+//         open={mobileOpen}
+//         onClick={() =>
+//           setMobileOpen(false)
+//         }
+//       />
+
+
+//       {/* =================================================
+//           SIDEBAR
+//       ================================================= */}
+
+//       <SidebarNav
+//         collapsed={sidebar}
+//         mobileOpen={mobileOpen}
+
+//         onMouseLeave={() => {
+
+//           if (
+//             !isMobile &&
+//             sidebar
+//           ) {
+
+//             setSubmenu(null);
+
+//           }
+
+//         }}
+//       >
+
+//         {renderMenu()}
+
+//       </SidebarNav>
+
+
+//       {/* =================================================
+//           DESKTOP SIDEBAR COLLAPSE BUTTON
+//       ================================================= */}
+
+//       <DesktopCollapseButton
+//         type="button"
+
+//         collapsed={sidebar}
+
+//         onClick={
+//           toggleSidebar
+//         }
+
+//         aria-label="Collapse sidebar"
+//       >
+
+//         {sidebar
+
+//           ? (
+//             <MdIcons.MdOutlineArrowForwardIos />
+//           )
+
+//           : (
+//             <MdIcons.MdOutlineArrowBackIosNew />
+//           )
+
+//         }
+
+//       </DesktopCollapseButton>
+
+
+//       {/* =================================================
+//           MAIN PAGE CONTENT
+//       ================================================= */}
+
+//       <MainContent
+//         collapsed={sidebar}
+//       >
+
+//         <ContentInner>
+
+//           <Sharesidebar.Provider
+//             value={sidebar}
+//           >
+
+//             <Outlet />
+
+//           </Sharesidebar.Provider>
+
+//         </ContentInner>
+
+//       </MainContent>
+
+//     </King>
+
+//   );
+
+// };
+
+
+// export default TenantsDashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, {
   createContext,
   useEffect,
   useState,
+  useRef,
 } from "react";
 
 import styled from "@emotion/styled";
@@ -943,6 +2644,7 @@ import {
 } from "react-jwt";
 
 import Tenantsidebardata from "./Tenantsidebardata";
+
 
 /* =========================================================
    CONSTANTS
@@ -1225,7 +2927,8 @@ const Profilehide = styled.div`
 
   border: 1px solid #333;
 
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.4);
 
   z-index: 2000;
 
@@ -1526,9 +3229,11 @@ const SubmenuLink = styled(Link)`
 const HoverPopup = styled.div`
   position: fixed;
 
-  top: ${({ top }) => `${top}px`};
+  top: ${({ top }) =>
+    `${top}px`};
 
-  left: ${SIDEBAR_COLLAPSED + 4}px;
+  left:
+    ${SIDEBAR_COLLAPSED + 4}px;
 
   min-width: 220px;
 
@@ -1701,42 +3406,58 @@ export const Sharesidebar =
 const TenantsDashboard = () => {
 
   /*
-    IMPORTANT:
-
     false = expanded desktop sidebar
 
     true = collapsed desktop sidebar
-
-    This keeps the same meaning as your
-    existing Sharesidebar context.
   */
 
   const [sidebar, setSidebar] =
     useState(false);
 
+
   const [mobileOpen, setMobileOpen] =
     useState(false);
+
 
   const [submenu, setSubmenu] =
     useState(null);
 
+
   const [showProfile, setShowProfile] =
     useState(false);
+
+
+  /*
+    REF FOR PROFILE DROPDOWN
+
+    This allows us to detect whether
+    a click happened inside or outside
+    the profile area.
+  */
+
+  const profileRef =
+    useRef(null);
+
 
   const [isMobile, setIsMobile] =
     useState(
       typeof window !== "undefined"
-        ? window.innerWidth < MOBILE_BREAKPOINT
+        ? window.innerWidth <
+          MOBILE_BREAKPOINT
         : false
     );
+
 
   const [isloggedin, setLoggedIn] =
     useState(false);
 
+
   const [username, setUsername] =
     useState("");
 
-  const location = useLocation();
+
+  const location =
+    useLocation();
 
 
   /* =======================================================
@@ -1751,7 +3472,9 @@ const TenantsDashboard = () => {
         window.innerWidth <
         MOBILE_BREAKPOINT;
 
+
       setIsMobile(mobile);
+
 
       /*
         When returning to desktop,
@@ -1759,12 +3482,16 @@ const TenantsDashboard = () => {
       */
 
       if (!mobile) {
+
         setMobileOpen(false);
+
       }
+
     };
 
 
     handleResize();
+
 
     window.addEventListener(
       "resize",
@@ -1800,6 +3527,54 @@ const TenantsDashboard = () => {
 
 
   /* =======================================================
+     CLOSE PROFILE WHEN CLICKING OUTSIDE
+  ======================================================= */
+
+  useEffect(() => {
+
+    const handleClickOutside = (
+      event
+    ) => {
+
+      /*
+        If the profile area exists
+        and the clicked element is NOT
+        inside it, close the dropdown.
+      */
+
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(
+          event.target
+        )
+      ) {
+
+        setShowProfile(false);
+
+      }
+
+    };
+
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+
+    return () => {
+
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+
+    };
+
+  }, []);
+
+
+  /* =======================================================
      AUTHENTICATION
   ======================================================= */
 
@@ -1819,6 +3594,7 @@ const TenantsDashboard = () => {
         "/signin";
 
       return;
+
     }
 
 
@@ -1859,6 +3635,7 @@ const TenantsDashboard = () => {
         error
       );
 
+
       setLoggedIn(false);
 
     }
@@ -1880,6 +3657,7 @@ const TenantsDashboard = () => {
       );
 
       return;
+
     }
 
 
@@ -1936,6 +3714,7 @@ const TenantsDashboard = () => {
     localStorage.removeItem(
       "accessToken"
     );
+
 
     localStorage.removeItem(
       "refreshToken"
@@ -2071,12 +3850,15 @@ const TenantsDashboard = () => {
                                     "flex",
                                 }}
                               >
+
                                 {
                                   dropdownmenu.icon
                                 }
+
                               </span>
 
                             )}
+
 
                             {
                               dropdownmenu.title
@@ -2244,12 +4026,15 @@ const TenantsDashboard = () => {
                                 "flex",
                             }}
                           >
+
                             {
                               dropdownmenu.icon
                             }
+
                           </span>
 
                         )}
+
 
                         {
                           dropdownmenu.title
@@ -2348,7 +4133,17 @@ const TenantsDashboard = () => {
 
         {isloggedin ? (
 
-          <Wholeprofile>
+          /*
+            REF IS ATTACHED HERE
+
+            Everything inside Wholeprofile,
+            including the dropdown, counts
+            as "inside" the profile area.
+          */
+
+          <Wholeprofile
+            ref={profileRef}
+          >
 
             <Profileshow
               type="button"
@@ -2356,18 +4151,6 @@ const TenantsDashboard = () => {
               onClick={
                 toggleProfile
               }
-
-              onMouseEnter={() => {
-
-                if (!isMobile) {
-
-                  setShowProfile(
-                    true
-                  );
-
-                }
-
-              }}
 
               aria-label="User menu"
             >
@@ -2428,6 +4211,7 @@ const TenantsDashboard = () => {
 
                 <Settingrow
                   to="/signin"
+
                   onClick={
                     handleLogout
                   }
@@ -2481,6 +4265,7 @@ const TenantsDashboard = () => {
 
       <Overlay
         open={mobileOpen}
+
         onClick={() =>
           setMobileOpen(false)
         }
@@ -2493,6 +4278,7 @@ const TenantsDashboard = () => {
 
       <SidebarNav
         collapsed={sidebar}
+
         mobileOpen={mobileOpen}
 
         onMouseLeave={() => {
@@ -2577,94 +4363,34 @@ const TenantsDashboard = () => {
 export default TenantsDashboard;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// The important addition is the `useRef` + outside-click listener:
+
+// ```js
+// const profileRef = useRef(null);
+// ```
+
+// and:
+
+// ```js
+// useEffect(() => {
+//   const handleClickOutside = (event) => {
+//     if (
+//       profileRef.current &&
+//       !profileRef.current.contains(event.target)
+//     ) {
+//       setShowProfile(false);
+//     }
+//   };
+
+//   document.addEventListener("mousedown", handleClickOutside);
+
+//   return () => {
+//     document.removeEventListener("mousedown", handleClickOutside);
+//   };
+// }, []);
+// ```
+
+// I also removed the profile's `onMouseEnter`, so it is now **strictly click to open / click outside to close**.
 
 
 
