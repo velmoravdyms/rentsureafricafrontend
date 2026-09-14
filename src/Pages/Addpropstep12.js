@@ -169,7 +169,7 @@ const RenderGoogleMap=()=>{
 
 
     return (
-        <APIProvider apiKey="AIzaSyARlxfTfWB8J9gCxyxgmw-bWaXyv4ILLGQ " onLoad={()=> console.log("GOOGLE MAPS JUST GOT LOADED")}>
+        <APIProvider apiKey="AIzaSyC61R7BevXG7uOoAAWEaxSoDYs0ldNwrT4 " onLoad={()=> console.log("GOOGLE MAPS JUST GOT LOADED")}>
            
             <Maprender>
                 
