@@ -94,7 +94,65 @@ const createCaretaker= async (caretakername,caretakeremail,caretakerphonenumber)
 }
 
 
-const sendpropertyDetails= async (propertytype,propertylistingpurpose,propertyinternalfeatures,propertyexternalfeatures,propertynearbyfeatures,propertyroomsperunit,propertypriceperunit)=>{
+// const sendpropertyDetails= async (propertytype,propertylistingpurpose,propertyinternalfeatures,propertyexternalfeatures,propertynearbyfeatures,propertyroomsperunit,propertypriceperunit)=>{
+
+//     console.log("here are the property details propertytype, " , propertytype)
+//     console.log("here are the property details propertylistingpurpose, ",propertylistingpurpose)
+//     console.log("here are the property details propertyinternalfeatures, ",propertyinternalfeatures)
+//     console.log("here are the property details propertyexternalfeatures, ",propertyexternalfeatures)
+//     console.log("here are the property details propertynearbyfeatures, ",propertynearbyfeatures)
+//     console.log("here are the property details propertyroomsperunit, " ,propertyroomsperunit)
+//     console.log("here are the property details propertypriceperunit " ,propertypriceperunit)
+
+
+  
+//     const propertyId=JSON.parse(localStorage.getItem("propertyId"));
+//     console.log("Here is the property Id before I create a landlord " + propertyId)
+
+//     console.log(api)
+
+
+//     try {
+//         const response=await api.post( propapis + `/propertyfeatures/${propertyId}`, {propertytype,propertylistingpurpose,propertyinternalfeatures,propertyexternalfeatures,propertynearbyfeatures,propertyroomsperunit,propertypriceperunit});
+
+//         console.log("Response From Create Property Features" , response.data);
+        
+//         return response;
+//     }
+//     catch(err){
+//         console.log(err);
+//         console.log("error in the catch err" + err)
+//     }
+
+//     // return
+
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const sendpropertyDetails = async (
+    propertytype,
+    propertylistingpurpose,
+    propertyinternalfeatures,
+    propertyexternalfeatures,
+    propertynearbyfeatures,
+    propertyroomsperunit,
+    propertypriceperunit,
+    propertylocation
+) => {
 
     console.log("here are the property details propertytype, " , propertytype)
     console.log("here are the property details propertylistingpurpose, ",propertylistingpurpose)
@@ -103,9 +161,9 @@ const sendpropertyDetails= async (propertytype,propertylistingpurpose,propertyin
     console.log("here are the property details propertynearbyfeatures, ",propertynearbyfeatures)
     console.log("here are the property details propertyroomsperunit, " ,propertyroomsperunit)
     console.log("here are the property details propertypriceperunit " ,propertypriceperunit)
+    console.log("here are the property details propertylocation ", propertylocation)
 
 
-  
     const propertyId=JSON.parse(localStorage.getItem("propertyId"));
     console.log("Here is the property Id before I create a landlord " + propertyId)
 
@@ -113,7 +171,19 @@ const sendpropertyDetails= async (propertytype,propertylistingpurpose,propertyin
 
 
     try {
-        const response=await api.post( propapis + `/propertyfeatures/${propertyId}`, {propertytype,propertylistingpurpose,propertyinternalfeatures,propertyexternalfeatures,propertynearbyfeatures,propertyroomsperunit,propertypriceperunit});
+        const response=await api.post(
+            propapis + `/propertyfeatures/${propertyId}`,
+            {
+                propertytype,
+                propertylistingpurpose,
+                propertyinternalfeatures,
+                propertyexternalfeatures,
+                propertynearbyfeatures,
+                propertyroomsperunit,
+                propertypriceperunit,
+                propertylocation
+            }
+        );
 
         console.log("Response From Create Property Features" , response.data);
         
@@ -123,9 +193,6 @@ const sendpropertyDetails= async (propertytype,propertylistingpurpose,propertyin
         console.log(err);
         console.log("error in the catch err" + err)
     }
-
-    // return
-
 }
 
 
