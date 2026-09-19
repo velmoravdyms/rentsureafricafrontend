@@ -320,13 +320,15 @@ function Addpropstep7 (){
       console.log(JSON.parse(localStorage.getItem("availableunits")))       
       console.log(JSON.parse(localStorage.getItem("totalunits")))       
 
-      console.log(propertyname);
-      console.log(totalunits);
-      console.log(availableunits);
+      console.log("Here is the property name" ,propertyname);
+      console.log("Here is the property total units" ,totalunits);
+      console.log("Here is the property availalbe units" ,availableunits);
 
       function getResponse(){
         const response=createProperty(propertyname,totalunits,availableunits).then((results)=>{
+          console.log("Here is the Apartement details results")
           console.log(results);
+
         });
 
           return response;

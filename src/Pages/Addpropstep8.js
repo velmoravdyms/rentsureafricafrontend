@@ -647,7 +647,7 @@ function Addpropstep8 (){
                         </Form>  
                     </Propertycontainer>                           
               </Listbody>
-          </Listpropdiv> 
+          </Listpropdiv>  
           </div>
    
       )

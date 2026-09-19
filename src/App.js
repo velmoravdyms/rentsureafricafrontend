@@ -16,6 +16,7 @@ import {Payrent} from './Pages/payrent';
 import Fake from "./Pages/Fakes";
 import Tests from "../src/Pages/Test";
 import Empty from './Pages/Empty';
+import ViewAllProperties from './Pages/viewallproperties';
 
 import Nest from "./Pages/Nest"
 import Verify from "./components/VerifyComponent"
@@ -44,6 +45,22 @@ import RendermapContainercopy from "./Pages/autocompletecopy"
 import Setpoimarkers from "./Pages/SetpoiMarkers";
 
 import Mapandautocomplete from "./Pages/mapandautocomplete"
+import AgencyDashboard from "./Pages/AgencyDashboard"
+import ViewAllLandlords from './Pages/viewalllandlords';
+import ViewAllCaretakers from './Pages/viewallcaretaker';
+import AddCaretaker from './Pages/createcaretaker';
+import ViewAllUnits from "./Pages/viewallunits";
+import ViewAllVendorServiceProviders from './Pages/viewallserviceproviders';
+import CreateWorkOrder from './Pages/createworkorder';
+import ViewAllWorkOrders from "./Pages/viewallworkorders";
+import ScheduledMaintenance from "./Pages/scheduledmaintenance"
+import ViewAllRentalAgreements from "./Pages/viewallrentalagreements"
+import ViewAllEvacuationNotices from "./Pages/viewAllEvacuationNotices"
+import ViewAllRentPaymentReceipts from "./Pages/viewallmonthlyrentreceipts"
+import ViewAllRentInvoices from "./Pages/viewallmonthlyrentinvoices"
+import ViewMonthlyExpenditure from "./Pages/monthlyexpenditure";
+import ViewMonthlyIncomeStatement from "./Pages/monthlyincomestatement"
+import Support from "./Pages/support";
 
 
 
@@ -70,8 +87,8 @@ const App = () => {
 
         <Route path="/agency" element={<Sidebar />} >
             <Route>
-              <Route path="dashboard" element={<Tests />} />  
-              <Route index element={<Tests />  } />  
+              <Route path="dashboard" element={<AgencyDashboard />} />  
+              <Route index element={<AgencyDashboard />  } />  
             </Route>
 
             <Route path="properties" >
@@ -93,56 +110,64 @@ const App = () => {
               </Route>
           
               <Route>
-                <Route path="view-all-properties" element={<Empty />} />
+                <Route path="view-all-properties" element={<ViewAllProperties  />} />
                 <Route index element={<Tests />  } />   
               </Route>
             
             </Route>
             
-            <Route path="landlords" element={<Fake />}>
-              <Route path="all-landlords" element={<Fake />} />
-              <Route path="create-new-landlord" element={<Tests />} />
-              <Route path="find-landlord" element={<Fake />} />
-              <Route index element={<Empty />  } />   
+            <Route path="landlords" >
+              <Route path="all-landlords" element={<ViewAllLandlords />} />
+              <Route path="create-new-landlord" element={<ViewAllLandlords />} />
+              <Route path="find-landlord" element={<ViewAllLandlords />} />
+              <Route index element={<ViewAllLandlords />  } />   
             </Route>
 
-            <Route path="units" element={<Fake />} > 
-              <Route path="all-units" element={<Tests />} /> 
-              <Route path="create-new-unit" element={<Fake />} /> 
-              <Route path="find-unit" element={<Tests />} /> 
-              <Route index element={<Tests />} /> 
+            <Route path="units" > 
+              <Route path="all-units" element={<ViewAllUnits />} /> 
+              <Route path="create-new-unit" element={<ViewAllUnits />} /> 
+              <Route path="find-unit" element={<ViewAllUnits />} /> 
+              <Route index element={<ViewAllUnits />} /> 
             </Route>
 
-            <Route path="service-providers" element={<Empty/>}>
-              <Route path="all-technicians" element={<Fake />} />
-              <Route path="add-new-technician" element={<Tests />} />
-              <Route index element={<Empty />  } />   
+            <Route path="service-providers">
+              <Route path="all" element={<ViewAllVendorServiceProviders />} />
+              <Route path="add" element={<ViewAllVendorServiceProviders />} />
+              <Route index element={<ViewAllVendorServiceProviders />  } />   
             </Route>
 
-            <Route path="caretakers" element={<Tests/>}>
-              <Route path="all-caretakers" element={<Tests />} />
-              <Route path="create-new-caretaker" element={<Fake />} />
-              <Route path="find-caretaker" element={<Empty />} />
-              <Route index element={<Empty />  } />   
+            <Route path="caretakers">
+              <Route path="all-caretakers" element={<ViewAllCaretakers />} />
+              <Route path="create-new-caretaker" element={<AddCaretaker />} />
+              <Route index element={<ViewAllCaretakers />  } />   
             </Route>
 
-            <Route path="attachments" element={<Empty />} > 
-              <Route path="work-orders" element={<Tests />} />
-              <Route path="evacuation-notice" element={<Fake />} />
-              <Route path="invoices" element={<Fake />} />
-              <Route path="payment-receipt" element={<Tests />} />
-              <Route path="rental-Agreement" element={<Fake />} />
-              <Route index element={<Empty />  } />   
+            <Route path="maintenance" > 
+              <Route path="work-orders" element={<ViewAllWorkOrders />} />
+              <Route path="create-order" element={<CreateWorkOrder />} />
+              <Route path="scheduled" element={<ScheduledMaintenance />} />
+              <Route index element={<ViewAllWorkOrders />  } />   
+            </Route>
+            
+
+
+            <Route path="docs-and-attachments" > 
+              <Route path="evacuation-notices" element={<ViewAllEvacuationNotices />} />
+              <Route path="rental-invoices" element={<ViewAllRentInvoices />} />
+              <Route path="rent-payment-receipts" element={<ViewAllRentPaymentReceipts />} />
+              <Route path="rental-agreements" element={<ViewAllRentalAgreements />} />
+              <Route index element={<ViewAllRentalAgreements />  } />   
             </Route>
 
-            <Route path="reports" element={<Empty />}>
-              <Route path="monthy-expenses" element={<Tests />} />
-              <Route path="monthly-income" element={<Fake />} />
+            <Route path="reports">
+              <Route path="monthly-expenses" element={<ViewMonthlyExpenditure />} />
+              <Route path="monthly-income" element={<ViewMonthlyIncomeStatement />} />
+              <Route index element={<ViewMonthlyIncomeStatement />  } />   
             </Route>
 
             <Route>
-              <Route path="support" element={<Fake />} />  
-              <Route index element={< Fake/>  } />  
+              <Route path="support" element={<Support />} />  
+              <Route index element={< Support/>  } />  
             </Route>
           
 
