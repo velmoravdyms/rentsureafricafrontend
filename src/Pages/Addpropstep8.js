@@ -697,15 +697,28 @@
 
 
 
+import React, {
+  useState,
+  useContext,
+  useRef,
+  useEffect,
+} from "react";
 
-
-import React, { useState, useContext, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
+
 import { Sharesidebar } from "../components/Sidebar";
+import Form from "react-validation/build/form";
+
 import * as MdIcons from "react-icons/md";
 import * as BiIcons from "react-icons/bi";
+
 import { uploadImages } from "../components/apicalls";
+import { getPropertyImages } from "../components/apicalls";
+
+/* =========================================================
+   STYLED COMPONENTS
+========================================================= */
 
 const Breadcrumbs = styled.div`
   position: fixed;
@@ -715,6 +728,7 @@ const Breadcrumbs = styled.div`
   align-items: center;
   height: 45px;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+
   left: ${({ sidebar }) => (sidebar ? "5.5%" : "23.5%")};
   width: ${({ sidebar }) => (sidebar ? "92.5%" : "74.5%")};
 `;
@@ -727,8 +741,10 @@ const Listpropdiv = styled.div`
   position: fixed;
   top: 116px;
   height: 78vh;
+
   overflow-y: scroll;
   overflow-x: hidden;
+
   left: ${({ sidebar }) => (sidebar ? "6%" : "24%")};
   width: ${({ sidebar }) => (sidebar ? "93%" : "75%")};
 
@@ -768,49 +784,15 @@ const Progressbar = styled.div`
   background-color: #f5f5f5;
   height: 10px;
   border-radius: 3px;
+
   width: ${({ sidebar }) => (sidebar ? "50%" : "60%")};
+
   margin: 1rem auto;
 `;
 
 const Listbody = styled.div`
   margin: auto;
   width: 100%;
-`;
-
-const Backbutton = styled(Link)`
-  background-color: #f5f5f5;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin: 1rem 30% 1rem 2rem;
-  border-radius: 6.79px;
-  border: none;
-  padding: 0.5rem;
-  color: blue;
-
-  &:hover {
-    cursor: pointer;
-    color: white;
-    background-color: blue;
-  }
-`;
-
-const Nextbutton = styled(Link)`
-  text-decoration: none;
-  padding: 0.5rem;
-  background-color: ${({ disabled }) =>
-    disabled ? "#F5F5F5" : "blue"};
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: ${({ disabled }) => (disabled ? "blue" : "white")};
-  margin: 1rem;
-  border-radius: 6px;
-  border: none;
-  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
-
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const Propertycontainer = styled.div`
@@ -825,13 +807,11 @@ const SectionBlock = styled.div`
 const Label = styled.div`
   font-weight: 800;
   margin: 0.5rem 0;
-  font-size: 1.1rem;
 `;
 
 const Description = styled.div`
   color: #555;
   margin-bottom: 1rem;
-  line-height: 1.5;
 `;
 
 const Imagesdiv = styled.div`
@@ -840,34 +820,48 @@ const Imagesdiv = styled.div`
   align-items: center;
   flex-direction: row;
   flex-wrap: wrap;
+
   gap: 0.8rem;
+
   margin-bottom: 1rem;
 `;
 
 const Imagediv = styled.div`
-  background-image: url(${({ src }) => src});
   width: 13.5rem;
   height: 11.5rem;
+
+  background-image: url(${({ src }) => src});
   background-size: cover;
   background-position: center;
-  position: relative;
   background-repeat: no-repeat;
+
+  position: relative;
+
   background-color: #f8f8f8;
+
   border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 6px;
+
+  overflow: hidden;
 `;
 
 const Removebutton = styled.button`
   background-color: #f8f8f8;
   color: black;
+
   border: none;
+
   position: absolute;
+
   margin: 0.2rem;
+
   right: 0;
   top: 0;
+
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+
+  border-radius: 5px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -879,109 +873,225 @@ const Removebutton = styled.button`
   }
 `;
 
-const Inputlabel = styled.label`
+const UploadBox = styled.label`
   width: 100%;
-  height: 6.6rem;
+  min-height: 7rem;
+
   border: 2px dashed grey;
+  border-radius: 8px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   flex-direction: column;
-  position: relative;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+
+  color: #555;
+
+  transition: 0.2s;
 
   &:hover {
     background-color: #f8f8f8;
-    border-color: blue;
+    border-color: #007bff;
     cursor: pointer;
   }
+`;
+
+const UploadIcon = styled.div`
+  color: grey;
+  font-size: 2rem;
+`;
+
+const UploadText = styled.div`
+  margin-top: 0.3rem;
+`;
+
+const UploadTypes = styled.div`
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: #777;
 `;
 
 const HiddenInput = styled.input`
   display: none;
 `;
 
-const UploadText = styled.div`
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.3rem;
-`;
+const ErrorMessage = styled.div`
+  background-color: white;
+  color: red;
 
-const UploadHint = styled.div`
-  font-size: 0.85rem;
-  color: #777;
-`;
+  padding: 0.5rem 0;
 
-const ValidationMessage = styled.div`
-  width: 90%;
+  font-size: 0.9rem;
+
   margin: 0.5rem auto;
-  padding: 0.7rem 1rem;
-  border-radius: 6px;
-  background-color: #ffecec;
-  color: #d00000;
-  border: 1px solid #ffb3b3;
+
+  width: 100%;
 `;
+
+const ButtonsContainer = styled.div`
+  width: 40%;
+
+  margin: 3rem auto;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-wrap: wrap;
+`;
+
+const Backbutton = styled(Link)`
+  background-color: #f5f5f5;
+
+  text-decoration: none;
+
+  font-weight: 600;
+  font-size: 1.2rem;
+
+  margin: 1rem;
+
+  border-radius: 6.79px;
+
+  border: none;
+
+  padding: 0.5rem;
+
+  color: blue;
+
+  &:hover {
+    cursor: pointer;
+
+    color: white;
+
+    background-color: blue;
+  }
+`;
+
+const Nextbutton = styled.button`
+  text-decoration: none;
+
+  padding: 0.5rem 1rem;
+
+  background-color: ${({ disabled }) =>
+    disabled ? "#f5f5f5" : "blue"};
+
+  font-weight: 600;
+
+  font-size: 1.2rem;
+
+  color: ${({ disabled }) =>
+    disabled ? "blue" : "white"};
+
+  margin: 1rem;
+
+  border-radius: 6px;
+
+  border: none;
+
+  &:hover {
+    cursor: ${({ disabled }) =>
+      disabled ? "not-allowed" : "pointer"};
+  }
+`;
+
+/* =========================================================
+   CAMERA STYLES
+========================================================= */
 
 const CameraSection = styled.div`
-  margin: 1rem 0;
+  margin-top: 1rem;
+
   padding: 1rem;
+
   border: 2px dashed #007bff;
+
   border-radius: 8px;
+
   background-color: #f9fbfd;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `;
 
 const CameraStreamContainer = styled.div`
   position: relative;
+
   width: 100%;
-  max-width: 420px;
-  height: 280px;
+
+  max-width: 600px;
+
+  height: 350px;
+
+  margin: 1rem auto;
+
   background-color: #111;
+
   border-radius: 8px;
+
   overflow: hidden;
+
   display: flex;
-  justify-content: center;
+
   align-items: center;
-  margin-top: 1rem;
+
+  justify-content: center;
 `;
 
 const VideoElement = styled.video`
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
 
-const CanvasElement = styled.canvas`
-  display: none;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  background-color: #000;
 `;
 
 const CameraCapturedPreview = styled.img`
   width: 100%;
+
   height: 100%;
+
   object-fit: cover;
+
+  display: block;
 `;
 
 const CameraControls = styled.div`
   display: flex;
+
   gap: 1rem;
+
   margin-top: 1rem;
+
   flex-wrap: wrap;
+
   justify-content: center;
 `;
 
 const CameraButton = styled.button`
   display: flex;
+
   align-items: center;
+
+  justify-content: center;
+
   gap: 0.5rem;
+
   padding: 0.6rem 1.2rem;
+
   border-radius: 6px;
+
   border: none;
+
   font-weight: 600;
+
   cursor: pointer;
-  background-color: ${({ bg }) => bg || "#007bff"};
+
+  background-color: ${({ bg }) =>
+    bg || "#007bff"};
+
   color: white;
 
   &:hover {
@@ -989,327 +1099,636 @@ const CameraButton = styled.button`
   }
 `;
 
-const ActionButtons = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 2rem 0;
-  padding-bottom: 2rem;
+const CanvasElement = styled.canvas`
+  display: none;
 `;
 
+/* =========================================================
+   COMPONENT
+========================================================= */
+
 function Addpropstep8() {
-  let pics = [];
-
-  try {
-    const storedpics = JSON.parse(
-      localStorage.getItem("outsidepics")
-    );
-
-    if (storedpics && storedpics.saved) {
-      pics = storedpics.saved.prop || [];
-    }
-  } catch (error) {
-    console.error("Unable to read saved photos:", error);
-    pics = [];
-  }
-
   const side = useContext(Sharesidebar);
 
-  const [disabled, setDisabled] = useState(true);
+  const form = useRef(null);
+
+  /* =======================================================
+     IMAGE STATES
+
+     Each image is stored as:
+
+     {
+       file: File,
+       preview: "blob:http://..."
+     }
+  ======================================================= */
+
+  const [outsidePhotos, setOutsidePhotos] = useState([]);
+  const [insidePhotos, setInsidePhotos] = useState([]);
+  const [otherPhotos, setOtherPhotos] = useState([]);
+  const [cameraPhotos, setCameraPhotos] = useState([]);
+
+
+
+  useEffect(() => {
+      async function loadImages() {
+          const data = await getPropertyImages();
+
+          setOutsidePhotos(
+              data.outside.map(img => ({
+                  imageId: img.imageId,
+                  file: null,
+                  preview: img.url
+              }))
+          );
+
+          setInsidePhotos(
+              data.inside.map(img => ({
+                  imageId: img.imageId,
+                  file: null,
+                  preview: img.url
+              }))
+          );
+
+          setOtherPhotos(
+              data.other.map(img => ({
+                  imageId: img.imageId,
+                  file: null,
+                  preview: img.url
+              }))
+          );
+
+          setCameraPhotos(
+              data.camera.map(img => ({
+                  imageId: img.imageId,
+                  file: null,
+                  preview: img.url
+              }))
+          );
+      }
+
+      loadImages();
+  }, []);
+
+
+
+  /* =======================================================
+     UI STATES
+  ======================================================= */
+
   const [valid, setValid] = useState(true);
-  const [validsize, setValidsize] = useState(true);
-  const [path, setPath] = useState("#");
+  const [validSize, setValidSize] = useState(true);
 
-  // Photo arrays
-  const [outsidephoto, setoutsidePhoto] = useState(pics);
-  const [insidephoto, setinsidePhoto] = useState([]);
-  const [anyotherphoto, setanyotherPhoto] = useState([]);
-  const [cameraphoto, setCameraphoto] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
-  // Camera state
-  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  /* =======================================================
+     CAMERA STATES
+  ======================================================= */
+
+  const [isCameraActive, setIsCameraActive] =
+    useState(false);
+
   const [capturedCameraPhoto, setCapturedCameraPhoto] =
     useState(null);
 
   const videoRef = useRef(null);
+
   const canvasRef = useRef(null);
+
   const mediaStreamRef = useRef(null);
 
-  /*
-   * Validate whether at least one photo exists.
-   */
-  useEffect(() => {
-    const totalPhotos =
-      outsidephoto.length +
-      insidephoto.length +
-      anyotherphoto.length +
-      cameraphoto.length;
+  /* =======================================================
+     TOTAL PHOTO COUNT
+  ======================================================= */
 
-    if (totalPhotos > 0) {
-      setDisabled(false);
-      setPath("/agency/properties/list-property/step9");
-    } else {
-      setDisabled(true);
-      setPath("#");
+  const totalPhotos =
+    outsidePhotos.length +
+    insidePhotos.length +
+    otherPhotos.length +
+    cameraPhotos.length;
+
+  const disabled =
+    totalPhotos === 0 || uploading;
+
+  /* =======================================================
+     CLEAN UP PREVIEW URL
+  ======================================================= */
+
+  const revokePreview = (preview) => {
+    if (
+      preview &&
+      preview.startsWith("blob:")
+    ) {
+      URL.revokeObjectURL(preview);
     }
-  }, [
-    outsidephoto,
-    insidephoto,
-    anyotherphoto,
-    cameraphoto,
-  ]);
+  };
 
-  /*
-   * Clean up camera when component unmounts.
-   */
-  useEffect(() => {
-    return () => {
-      stopCameraStream();
-    };
-  }, []);
+  /* =======================================================
+     PROCESS MULTIPLE FILES
 
-  /*
-   * Universal image file processor.
-   */
-  const processImageFile = (
-    file,
-    targetSetter,
-    currentList
+     OUTSIDE / INSIDE / OTHER
+
+     CAMERA DOES NOT USE THIS FUNCTION.
+  ======================================================= */
+
+  const processFiles = (
+    files,
+    setter
   ) => {
-    if (!file) return;
-
-    // Only accept image files
-    if (!file.type || !file.type.startsWith("image/")) {
-      setValid(false);
+    if (!files || files.length === 0) {
       return;
     }
 
-    // 10MB maximum
-    if (file.size > 10000000) {
-      setValidsize(false);
-      return;
-    }
+    setValid(true);
+    setValidSize(true);
+    setUploadError("");
 
-    const image = URL.createObjectURL(file);
-    const reader = new FileReader();
+    const filesArray = Array.from(files);
 
-    reader.onload = function (e) {
-      const img = new Image();
+    const validFiles = [];
 
-      img.onload = function () {
-        targetSetter([...currentList, image]);
-        setValid(true);
-        setValidsize(true);
-      };
+    for (const file of filesArray) {
+      /* Only images */
 
-      img.onerror = function () {
-        URL.revokeObjectURL(image);
+      if (!file.type.startsWith("image/")) {
         setValid(false);
-      };
+        continue;
+      }
 
-      img.src = e.target.result;
-    };
+      /* Maximum 10 MB per image */
 
-    reader.readAsDataURL(file);
+      if (file.size > 10 * 1024 * 1024) {
+        setValidSize(false);
+        continue;
+      }
+
+      const preview =
+        URL.createObjectURL(file);
+
+      validFiles.push({
+        file,
+        preview,
+      });
+    }
+
+    if (validFiles.length > 0) {
+      setter((previous) => [
+        ...previous,
+        ...validFiles,
+      ]);
+    }
   };
 
-  /*
-   * Outside Photos
-   */
-  const outsidePhotoChange = (e) => {
-    processImageFile(
-      e.target.files[0],
-      setoutsidePhoto,
-      outsidephoto
+  /* =======================================================
+     INPUT HANDLERS
+  ======================================================= */
+
+  const handleOutsideChange = (e) => {
+    processFiles(
+      e.target.files,
+      setOutsidePhotos
     );
 
     e.target.value = "";
   };
 
-  const extractOutsideImageLink = (e) => {
-    e.preventDefault();
-
-    processImageFile(
-      e.dataTransfer.files[0],
-      setoutsidePhoto,
-      outsidephoto
-    );
-  };
-
-  const removeOutsideImage = (imageurl) => {
-    setoutsidePhoto(
-      outsidephoto.filter(
-        (remain) => remain !== imageurl
-      )
-    );
-  };
-
-  /*
-   * Inside Photos
-   */
-  const insidePhotoChange = (e) => {
-    processImageFile(
-      e.target.files[0],
-      setinsidePhoto,
-      insidephoto
+  const handleInsideChange = (e) => {
+    processFiles(
+      e.target.files,
+      setInsidePhotos
     );
 
     e.target.value = "";
   };
 
-  const extractInsideImageLink = (e) => {
-    e.preventDefault();
-
-    processImageFile(
-      e.dataTransfer.files[0],
-      setinsidePhoto,
-      insidephoto
-    );
-  };
-
-  const removeInsideImage = (imageurl) => {
-    setinsidePhoto(
-      insidephoto.filter(
-        (remain) => remain !== imageurl
-      )
-    );
-  };
-
-  /*
-   * Any Other Photos
-   */
-  const anyotherPhotoChange = (e) => {
-    processImageFile(
-      e.target.files[0],
-      setanyotherPhoto,
-      anyotherphoto
+  const handleOtherChange = (e) => {
+    processFiles(
+      e.target.files,
+      setOtherPhotos
     );
 
     e.target.value = "";
   };
 
-  const extractAnyotherImageLink = (e) => {
+  /* =======================================================
+     DRAG & DROP
+  ======================================================= */
+
+  const handleDrop = (
+    e,
+    setter
+  ) => {
     e.preventDefault();
 
-    processImageFile(
-      e.dataTransfer.files[0],
-      setanyotherPhoto,
-      anyotherphoto
+    processFiles(
+      e.dataTransfer.files,
+      setter
     );
   };
 
-  const removeAnyotherImage = (imageurl) => {
-    setanyotherPhoto(
-      anyotherphoto.filter(
-        (remain) => remain !== imageurl
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  /* =======================================================
+     REMOVE IMAGE
+
+     USED BY OUTSIDE / INSIDE / OTHER
+  ======================================================= */
+
+  const removeImage = (
+    index,
+    photos,
+    setter
+  ) => {
+    const image = photos[index];
+
+    if (image) {
+      revokePreview(image.preview);
+    }
+
+    setter((previous) =>
+      previous.filter(
+        (_, i) => i !== index
       )
     );
   };
 
-  /*
-   * Camera Photos
-   */
-  const removeCameraImage = (imageurl) => {
-    setCameraphoto(
-      cameraphoto.filter(
-        (remain) => remain !== imageurl
-      )
-    );
-  };
+  /* =======================================================
+     CAMERA
+  ======================================================= */
 
-  /*
-   * Start camera.
-   */
   const startCamera = async () => {
     try {
+      setUploadError("");
       setCapturedCameraPhoto(null);
 
-      if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-      ) {
-        alert(
-          "Camera access is not supported by this browser."
-        );
-        return;
+      /*
+       * Stop any previous camera stream first.
+       */
+
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current
+          .getTracks()
+          .forEach((track) => {
+            track.stop();
+          });
+
+        mediaStreamRef.current = null;
       }
+
+      /*
+       * Request camera access.
+       *
+       * We deliberately use video: true.
+       *
+       * This works well on laptops/desktops and
+       * also works on phones.
+       */
 
       const stream =
         await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "environment",
-            width: {
-              ideal: 1280,
-            },
-            height: {
-              ideal: 720,
-            },
-          },
+          video: true,
+          audio: false,
         });
+
+      console.log(
+        "Camera stream:",
+        stream
+      );
+
+      const videoTrack =
+        stream.getVideoTracks()[0];
+
+      console.log(
+        "Camera video track:",
+        videoTrack
+      );
+
+      if (videoTrack) {
+        console.log(
+          "Camera settings:",
+          videoTrack.getSettings()
+        );
+      }
+
+      /*
+       * Save the stream.
+       */
 
       mediaStreamRef.current = stream;
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-
-        try {
-          await videoRef.current.play();
-        } catch (error) {
-          console.error(
-            "Unable to start video playback:",
-            error
-          );
-        }
-      }
+      /*
+       * React will now render the video element.
+       *
+       * The useEffect below attaches the stream.
+       */
 
       setIsCameraActive(true);
-    } catch (err) {
-      console.error("Camera access error:", err);
 
-      alert(
-        "Unable to access camera. Please check your browser permissions and make sure this page is using HTTPS."
+    } catch (error) {
+      console.error(
+        "Camera access error:",
+        error
       );
+
+      setIsCameraActive(false);
+
+      if (
+        error.name ===
+        "NotAllowedError"
+      ) {
+        setUploadError(
+          "Camera permission was denied. Please allow camera access in your browser."
+        );
+
+      } else if (
+        error.name ===
+        "NotFoundError"
+      ) {
+        setUploadError(
+          "No camera was found on this device."
+        );
+
+      } else if (
+        error.name ===
+        "NotReadableError"
+      ) {
+        setUploadError(
+          "The camera is already being used by another application."
+        );
+
+      } else if (
+        error.name ===
+        "SecurityError"
+      ) {
+        setUploadError(
+          "Camera access is blocked by the browser or page security settings."
+        );
+
+      } else {
+        setUploadError(
+          `Unable to access camera: ${error.message}`
+        );
+      }
     }
   };
 
-  /*
-   * Stop camera stream.
-   */
+  /* =======================================================
+     ATTACH CAMERA STREAM TO VIDEO
+  ======================================================= */
+
+  useEffect(() => {
+    if (!isCameraActive) {
+      return;
+    }
+
+    const video = videoRef.current;
+
+    const stream =
+      mediaStreamRef.current;
+
+    console.log(
+      "Attaching camera stream..."
+    );
+
+    console.log(
+      "Video element:",
+      video
+    );
+
+    console.log(
+      "Camera stream:",
+      stream
+    );
+
+    if (!video) {
+      console.error(
+        "Camera video element is not available."
+      );
+
+      return;
+    }
+
+    if (!stream) {
+      console.error(
+        "Camera stream is not available."
+      );
+
+      return;
+    }
+
+    /*
+     * Attach MediaStream.
+     */
+
+    video.srcObject = stream;
+
+    /*
+     * Camera video settings.
+     */
+
+    video.autoplay = true;
+    video.muted = true;
+    video.playsInline = true;
+
+    /*
+     * Start playback.
+     */
+
+    const startVideoPlayback =
+      async () => {
+        try {
+          await video.play();
+
+          console.log(
+            "Camera video playing:",
+            video.videoWidth,
+            video.videoHeight
+          );
+
+          setUploadError("");
+
+        } catch (error) {
+          console.error(
+            "Camera video.play() failed:",
+            error
+          );
+
+          setUploadError(
+            "The camera opened, but the video preview could not start."
+          );
+        }
+      };
+
+    /*
+     * Wait for camera metadata.
+     */
+
+    video.addEventListener(
+      "loadedmetadata",
+      startVideoPlayback
+    );
+
+    /*
+     * Sometimes metadata is already available.
+     */
+
+    if (video.readyState >= 1) {
+      startVideoPlayback();
+    }
+
+    /*
+     * Extra safety attempt.
+     */
+
+    const playTimeout =
+      setTimeout(() => {
+        if (
+          video.srcObject &&
+          video.paused
+        ) {
+          video.play().catch(
+            (error) => {
+              console.error(
+                "Delayed camera video.play() failed:",
+                error
+              );
+            }
+          );
+        }
+      }, 200);
+
+    /*
+     * Cleanup.
+     */
+
+    return () => {
+      clearTimeout(playTimeout);
+
+      video.removeEventListener(
+        "loadedmetadata",
+        startVideoPlayback
+      );
+    };
+
+  }, [isCameraActive]);
+
+  /* =======================================================
+     STOP CAMERA
+  ======================================================= */
+
   const stopCameraStream = () => {
+    console.log(
+      "Stopping camera..."
+    );
+
+    const video =
+      videoRef.current;
+
+    /*
+     * Stop every camera track.
+     */
+
     if (mediaStreamRef.current) {
       mediaStreamRef.current
         .getTracks()
-        .forEach((track) => track.stop());
+        .forEach((track) => {
+          track.stop();
+        });
 
       mediaStreamRef.current = null;
     }
 
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
+    /*
+     * Disconnect stream from video.
+     */
+
+    if (video) {
+      video.pause();
+
+      video.srcObject = null;
     }
 
     setIsCameraActive(false);
   };
 
-  /*
-   * Take photo from live camera.
-   */
-  const takePhotoFromCamera = () => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
+  /* =======================================================
+     TAKE PHOTO FROM CAMERA
+  ======================================================= */
 
-    if (!video || !canvas) {
+  const takePhotoFromCamera = () => {
+    const video =
+      videoRef.current;
+
+    const canvas =
+      canvasRef.current;
+
+    if (!video) {
+      setUploadError(
+        "Camera video is not available."
+      );
+
       return;
     }
 
-    const context = canvas.getContext("2d");
+    if (!canvas) {
+      setUploadError(
+        "Camera canvas is not available."
+      );
+
+      return;
+    }
+
+    /*
+     * Make sure the camera is producing
+     * actual video frames.
+     */
+
+    if (
+      video.readyState < 2 ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
+      setUploadError(
+        "Camera is not ready yet. Please wait a moment."
+      );
+
+      return;
+    }
+
+    console.log(
+      "Taking camera photo:",
+      video.videoWidth,
+      video.videoHeight
+    );
+
+    /*
+     * Match canvas dimensions to camera.
+     */
+
+    canvas.width =
+      video.videoWidth;
+
+    canvas.height =
+      video.videoHeight;
+
+    const context =
+      canvas.getContext("2d");
 
     if (!context) {
+      setUploadError(
+        "Could not create camera canvas."
+      );
+
       return;
     }
 
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    /*
+     * Draw current video frame.
+     */
 
     context.drawImage(
       video,
@@ -1319,578 +1738,951 @@ function Addpropstep8() {
       canvas.height
     );
 
+    /*
+     * Convert to JPEG.
+     */
+
     canvas.toBlob(
       (blob) => {
-        if (blob) {
-          const photoUrl =
-            URL.createObjectURL(blob);
+        if (!blob) {
+          setUploadError(
+            "Could not capture the camera photo."
+          );
 
-          setCapturedCameraPhoto(photoUrl);
-          stopCameraStream();
+          return;
         }
+
+        /*
+         * Create actual File.
+         */
+
+        const file =
+          new File(
+            [blob],
+            `camera_${Date.now()}.jpg`,
+            {
+              type: "image/jpeg",
+            }
+          );
+
+        /*
+         * Create browser preview.
+         */
+
+        const preview =
+          URL.createObjectURL(blob);
+
+        console.log(
+          "Camera photo captured:",
+          file
+        );
+
+        /*
+         * Store both File and preview.
+         */
+
+        setCapturedCameraPhoto({
+          file,
+          preview,
+        });
+
+        /*
+         * Stop camera after capture.
+         */
+
+        stopCameraStream();
       },
       "image/jpeg",
       0.95
     );
   };
 
-  /*
-   * Add captured camera photo to gallery.
-   */
-  const addCapturedPhotoToGallery = () => {
-    if (capturedCameraPhoto) {
-      setCameraphoto((prev) => [
-        ...prev,
-        capturedCameraPhoto,
-      ]);
+  /* =======================================================
+     ADD CAPTURED CAMERA PHOTO
+     TO PROPERTY GALLERY
+  ======================================================= */
 
-      setCapturedCameraPhoto(null);
+  const addCapturedPhotoToGallery =
+    () => {
+      if (!capturedCameraPhoto) {
+        return;
+      }
+
+      setCameraPhotos(
+        (previous) => [
+          ...previous,
+          capturedCameraPhoto,
+        ]
+      );
+
+      setCapturedCameraPhoto(
+        null
+      );
+
       setValid(true);
-      setValidsize(true);
-    }
-  };
+      setValidSize(true);
+    };
 
-  /*
-   * Retake camera photo.
-   */
+  /* =======================================================
+     RETAKE CAMERA PHOTO
+  ======================================================= */
+
   const retakeCameraPhoto = () => {
-    setCapturedCameraPhoto(null);
+    if (capturedCameraPhoto) {
+      revokePreview(
+        capturedCameraPhoto.preview
+      );
+    }
+
+    setCapturedCameraPhoto(
+      null
+    );
+
     startCamera();
   };
 
-  /*
-   * Save all photos locally.
-   */
-  const saveDraft = () => {
-    const allPhotos = [
-      ...outsidephoto,
-      ...insidephoto,
-      ...anyotherphoto,
-      ...cameraphoto,
-    ];
+  /* =======================================================
+     REMOVE CAMERA PHOTO
+  ======================================================= */
 
-    const saved = {
-      prop: allPhotos,
-    };
+  const removeCameraPhoto = (
+    index
+  ) => {
+    const image =
+      cameraPhotos[index];
 
-    localStorage.setItem(
-      "outsidepics",
-      JSON.stringify({ saved })
+    if (image) {
+      revokePreview(
+        image.preview
+      );
+    }
+
+    setCameraPhotos(
+      (previous) =>
+        previous.filter(
+          (_, i) => i !== index
+        )
     );
   };
 
-  /*
-   * Save when going back.
-   */
-  const saveBack = () => {
-    saveDraft();
-  };
+  /* =======================================================
+     STOP CAMERA WHEN COMPONENT UNMOUNTS
+  ======================================================= */
 
-  /*
-   * Continue to next step.
-   */
-  const handleClick = (e) => {
+  useEffect(() => {
+    return () => {
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current
+          .getTracks()
+          .forEach((track) => {
+            track.stop();
+          });
+
+        mediaStreamRef.current = null;
+      }
+    };
+  }, []);
+
+  /* =======================================================
+     UPLOAD EVERYTHING
+
+     Each category remains separate:
+
+     outside
+     inside
+     other
+     camera
+  ======================================================= */
+
+  // const uploadAllPhotos =
+  //   async () => {
+  //     const uploadJobs = [];
+
+  //     if (
+  //       outsidePhotos.length > 0
+  //     ) {
+  //       uploadJobs.push(
+  //         uploadImages(
+  //           outsidePhotos.map(
+  //             (item) =>
+  //               item.file
+  //           ),
+  //           "outside"
+  //         )
+  //       );
+  //     }
+
+  //     if (
+  //       insidePhotos.length > 0
+  //     ) {
+  //       uploadJobs.push(
+  //         uploadImages(
+  //           insidePhotos.map(
+  //             (item) =>
+  //               item.file
+  //           ),
+  //           "inside"
+  //         )
+  //       );
+  //     }
+
+  //     if (
+  //       otherPhotos.length > 0
+  //     ) {
+  //       uploadJobs.push(
+  //         uploadImages(
+  //           otherPhotos.map(
+  //             (item) =>
+  //               item.file
+  //           ),
+  //           "other"
+  //         )
+  //       );
+  //     }
+
+  //     if (
+  //       cameraPhotos.length > 0
+  //     ) {
+  //       uploadJobs.push(
+  //         uploadImages(
+  //           cameraPhotos.map(
+  //             (item) =>
+  //               item.file
+  //           ),
+  //           "camera"
+  //         )
+  //       );
+  //     }
+
+  //     if (
+  //       uploadJobs.length === 0
+  //     ) {
+  //       return [];
+  //     }
+
+  //     const results =
+  //       await Promise.all(
+  //         uploadJobs
+  //       );
+
+  //     return results;
+  //   };
+
+
+
+
+
+
+
+
+const uploadAllPhotos = async () => {
+  const uploadJobs = [];
+
+  if (outsidePhotos.length > 0) {
+    uploadJobs.push(
+      uploadImages(
+        outsidePhotos
+          .filter(item => item.file !== null)
+          .map(item => item.file),
+        "outside"
+      )
+    );
+  }
+
+  if (insidePhotos.length > 0) {
+    uploadJobs.push(
+      uploadImages(
+        insidePhotos
+          .filter(item => item.file !== null)
+          .map(item => item.file),
+        "inside"
+      )
+    );
+  }
+
+  if (otherPhotos.length > 0) {
+    uploadJobs.push(
+      uploadImages(
+        otherPhotos
+          .filter(item => item.file !== null)
+          .map(item => item.file),
+        "other"
+      )
+    );
+  }
+
+  if (cameraPhotos.length > 0) {
+    uploadJobs.push(
+      uploadImages(
+        cameraPhotos
+          .filter(item => item.file !== null)
+          .map(item => item.file),
+        "camera"
+      )
+    );
+  }
+
+  if (uploadJobs.length === 0) return [];
+
+  return await Promise.all(uploadJobs);
+};
+
+
+
+
+
+
+
+
+  /* =======================================================
+     SAVE & NEXT
+  ======================================================= */
+
+  const handleNext = async (
+    e
+  ) => {
     e.preventDefault();
 
-    const allPhotos = [
-      ...outsidephoto,
-      ...insidephoto,
-      ...anyotherphoto,
-      ...cameraphoto,
-    ];
+    if (totalPhotos === 0) {
+      setUploadError(
+        "Please add at least one property photo."
+      );
 
-    if (allPhotos.length > 0) {
-      setDisabled(false);
+      return;
+    }
 
-      saveDraft();
+    if (uploading) {
+      return;
+    }
 
-      try {
-        uploadImages(allPhotos);
-      } catch (error) {
-        console.error(
-          "Image upload error:",
-          error
-        );
-      }
-    } else {
-      setDisabled(true);
+    try {
+      setUploading(true);
+
+      setUploadError("");
+
+      const results =
+        await uploadAllPhotos();
+
+      /*
+       * Save server URLs, NOT blob URLs.
+       */
+
+      const uploadedPhotos = {
+        outside: [],
+        inside: [],
+        other: [],
+        camera: [],
+      };
+
+      results.forEach(
+        (result) => {
+          if (
+            result &&
+            result.category &&
+            result.urls
+          ) {
+            uploadedPhotos[
+              result.category
+            ] = result.urls;
+          }
+        }
+      );
+
+      localStorage.setItem(
+        "propertyPhotos",
+        JSON.stringify(
+          uploadedPhotos
+        )
+      );
+
+      /*
+       * Keep old localStorage structure.
+       */
+
+      localStorage.setItem(
+        "outsidepics",
+        JSON.stringify({
+          saved: {
+            prop:
+              uploadedPhotos.outside,
+          },
+        })
+      );
+
+      /*
+       * Go to Step 9.
+       */
+
+      window.location.href =
+        "/agency/properties/list-property/step9";
+
+    } catch (error) {
+      console.error(
+        "Photo upload failed:",
+        error
+      );
+
+      setUploadError(
+        "Some photos could not be uploaded. Please try again."
+      );
+
+    } finally {
+      setUploading(false);
     }
   };
 
-  return (
-    <>
-      {/* Breadcrumb */}
-      <Breadcrumbs sidebar={side}>
-        <Crumbsicons>
-          <MdIcons.MdHome size={22} />
-        </Crumbsicons>
+  /* =======================================================
+     SAVE WHEN GOING BACK
+  ======================================================= */
 
-        <span style={{ marginLeft: "0.5rem" }}>
-          List new property
-        </span>
+  const saveBack = () => {
+    /*
+     * We intentionally don't upload here.
+     */
+  };
+
+  /* =======================================================
+     RENDER IMAGE GALLERY
+  ======================================================= */
+
+  const renderGallery = (
+    photos,
+    setter,
+    removeFunction
+  ) => {
+    if (!photos.length) {
+      return null;
+    }
+
+    return (
+      <Imagesdiv>
+        {photos.map(
+          (photo, index) => (
+            <Imagediv
+              key={`${photo.preview}-${index}`}
+              src={photo.preview}
+            >
+              <Removebutton
+                type="button"
+                onClick={() =>
+                  removeFunction(
+                    index,
+                    photos,
+                    setter
+                  )
+                }
+              >
+                <MdIcons.MdOutlineClose />
+              </Removebutton>
+            </Imagediv>
+          )
+        )}
+      </Imagesdiv>
+    );
+  };
+
+  /* =======================================================
+     RETURN
+  ======================================================= */
+
+  return (
+    <div>
+
+      {/* =================================================
+          BREADCRUMBS
+      ================================================= */}
+
+      <Breadcrumbs
+        sidebar={side ? 1 : 0}
+      >
+        <Crumbsicons>
+          Icons will go here
+        </Crumbsicons>
       </Breadcrumbs>
 
-      {/* Main scrollable content */}
-      <Listpropdiv sidebar={side}>
-        <ListHeader>
-          <Headertitle sidebar={side}>
-            Add Property Photos
-          </Headertitle>
+      {/* =================================================
+          MAIN CONTENT
+      ================================================= */}
 
-          <Progressbar sidebar={side} />
+      <Listpropdiv
+        sidebar={side ? 1 : 0}
+      >
+
+        <ListHeader>
+          <Headertitle>
+            List new property
+          </Headertitle>
         </ListHeader>
 
         <Listbody>
-          {/* Validation messages */}
-          {!valid && (
-            <ValidationMessage>
-              Invalid file format! Images only e.g.
-              .png, .jpeg, .jpg, .svg
-            </ValidationMessage>
-          )}
 
-          {!validsize && (
-            <ValidationMessage>
-              Image too big. Only images up to 10MB
-              are accepted.
-            </ValidationMessage>
-          )}
+          <Progressbar
+            sidebar={side ? 1 : 0}
+          />
 
           <Propertycontainer>
-            {/* =====================================================
-                1. OUTSIDE PHOTOS
-            ====================================================== */}
-            <SectionBlock>
-              <Label>
-                Outside of the Apartment Photos:
-              </Label>
 
-              <Description>
-                Upload photos showing the external
-                exterior view of your apartment.
-              </Description>
+            <Form
+              ref={form}
+              encType="multipart/form-data"
+              onSubmit={handleNext}
+            >
 
-              {/* Image Display Area */}
-              {outsidephoto.length > 0 && (
-                <Imagesdiv>
-                  {outsidephoto.map(
-                    (photo, index) => (
-                      <Imagediv
-                        key={`${photo}-${index}`}
-                        src={photo}
-                      >
-                        <Removebutton
-                          type="button"
-                          onClick={() =>
-                            removeOutsideImage(
-                              photo
-                            )
-                          }
-                          aria-label="Remove outside photo"
-                        >
-                          <MdIcons.MdClose
-                            size={20}
-                          />
-                        </Removebutton>
-                      </Imagediv>
-                    )
-                  )}
-                </Imagesdiv>
+              {/* =================================================
+                  ERRORS
+              ================================================= */}
+
+              {!valid && (
+                <ErrorMessage>
+                  Invalid file format.
+                  Please select image
+                  files only.
+                </ErrorMessage>
               )}
 
-              {/* Drag and Drop / Click Upload Box */}
-              <Inputlabel
-                htmlFor="outside-photo-input"
-                onDragOver={(e) =>
-                  e.preventDefault()
-                }
-                onDrop={extractOutsideImageLink}
-              >
-                <BiIcons.BiImageAdd
-                  size={30}
-                  color="blue"
-                />
-
-                <UploadText>
-                  Drag and Drop or Click Here to
-                  upload Outside Photos
-                </UploadText>
-
-                <UploadHint>
-                  (Accepts .jpg, .jpeg, .svg,
-                  .png upto 10Mbs)
-                </UploadHint>
-
-                <HiddenInput
-                  id="outside-photo-input"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/svg+xml"
-                  onChange={
-                    outsidePhotoChange
-                  }
-                />
-              </Inputlabel>
-            </SectionBlock>
-
-            {/* =====================================================
-                2. INSIDE PHOTOS
-            ====================================================== */}
-            <SectionBlock>
-              <Label>
-                Photos of Inside the Apartment:
-              </Label>
-
-              <Description>
-                Upload photos of interior rooms,
-                kitchen, bedrooms, or bathrooms.
-              </Description>
-
-              {/* Image Display Area */}
-              {insidephoto.length > 0 && (
-                <Imagesdiv>
-                  {insidephoto.map(
-                    (photo, index) => (
-                      <Imagediv
-                        key={`${photo}-${index}`}
-                        src={photo}
-                      >
-                        <Removebutton
-                          type="button"
-                          onClick={() =>
-                            removeInsideImage(
-                              photo
-                            )
-                          }
-                          aria-label="Remove inside photo"
-                        >
-                          <MdIcons.MdClose
-                            size={20}
-                          />
-                        </Removebutton>
-                      </Imagediv>
-                    )
-                  )}
-                </Imagesdiv>
+              {!validSize && (
+                <ErrorMessage>
+                  One or more images
+                  were larger than
+                  10 MB and were not
+                  added.
+                </ErrorMessage>
               )}
 
-              {/* Drag and Drop / Click Upload Box */}
-              <Inputlabel
-                htmlFor="inside-photo-input"
-                onDragOver={(e) =>
-                  e.preventDefault()
-                }
-                onDrop={extractInsideImageLink}
-              >
-                <BiIcons.BiImageAdd
-                  size={30}
-                  color="blue"
-                />
-
-                <UploadText>
-                  Drag and Drop or Click Here to
-                  upload Inside Photos
-                </UploadText>
-
-                <UploadHint>
-                  (Accepts .jpg, .jpeg, .svg,
-                  .png upto 10Mbs)
-                </UploadHint>
-
-                <HiddenInput
-                  id="inside-photo-input"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/svg+xml"
-                  onChange={
-                    insidePhotoChange
-                  }
-                />
-              </Inputlabel>
-            </SectionBlock>
-
-            {/* =====================================================
-                3. ANY OTHER PHOTOS
-            ====================================================== */}
-            <SectionBlock>
-              <Label>
-                Photos of any other place of the
-                Apartment:
-              </Label>
-
-              <Description>
-                Upload photos of common areas,
-                parking, compound, or amenities.
-              </Description>
-
-              {/* Image Display Area */}
-              {anyotherphoto.length > 0 && (
-                <Imagesdiv>
-                  {anyotherphoto.map(
-                    (photo, index) => (
-                      <Imagediv
-                        key={`${photo}-${index}`}
-                        src={photo}
-                      >
-                        <Removebutton
-                          type="button"
-                          onClick={() =>
-                            removeAnyotherImage(
-                              photo
-                            )
-                          }
-                          aria-label="Remove other photo"
-                        >
-                          <MdIcons.MdClose
-                            size={20}
-                          />
-                        </Removebutton>
-                      </Imagediv>
-                    )
-                  )}
-                </Imagesdiv>
+              {uploadError && (
+                <ErrorMessage>
+                  {uploadError}
+                </ErrorMessage>
               )}
 
-              {/* Drag and Drop / Click Upload Box */}
-              <Inputlabel
-                htmlFor="any-other-photo-input"
-                onDragOver={(e) =>
-                  e.preventDefault()
-                }
-                onDrop={
-                  extractAnyotherImageLink
-                }
-              >
-                <BiIcons.BiImageAdd
-                  size={30}
-                  color="blue"
-                />
+              {/* =================================================
+                  OUTSIDE PHOTOS
+              ================================================= */}
 
-                <UploadText>
-                  Drag and Drop or Click Here to
-                  upload Other Photos
-                </UploadText>
+              <SectionBlock>
 
-                <UploadHint>
-                  (Accepts .jpg, .jpeg, .svg,
-                  .png upto 10Mbs)
-                </UploadHint>
+                <Label>
+                  Outside of the Apartment
+                  Photos:
+                </Label>
 
-                <HiddenInput
-                  id="any-other-photo-input"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/svg+xml"
-                  onChange={
-                    anyotherPhotoChange
-                  }
-                />
-              </Inputlabel>
-            </SectionBlock>
+                <Description>
+                  Upload photos showing
+                  the external/exterior
+                  view of your apartment.
+                </Description>
 
-            {/* =====================================================
-                4. LIVE CAMERA PHOTOS
-            ====================================================== */}
-            <SectionBlock>
-              <Label>
-                Camera Captured Photos:
-              </Label>
-
-              <Description>
-                Take photos directly using your
-                phone or desktop camera.
-              </Description>
-
-              {/* Image Display Area */}
-              {cameraphoto.length > 0 && (
-                <Imagesdiv>
-                  {cameraphoto.map(
-                    (photo, index) => (
-                      <Imagediv
-                        key={`${photo}-${index}`}
-                        src={photo}
-                      >
-                        <Removebutton
-                          type="button"
-                          onClick={() =>
-                            removeCameraImage(
-                              photo
-                            )
-                          }
-                          aria-label="Remove camera photo"
-                        >
-                          <MdIcons.MdClose
-                            size={20}
-                          />
-                        </Removebutton>
-                      </Imagediv>
-                    )
-                  )}
-                </Imagesdiv>
-              )}
-
-              {/* Camera Box */}
-              <CameraSection>
-                <BiIcons.BiCamera
-                  size={40}
-                  color="#007bff"
-                />
-
-                <UploadText>
-                  Take Photo with Camera
-                </UploadText>
-
-                <UploadHint>
-                  Take a live photo using your
-                  phone or desktop camera
-                </UploadHint>
-
-                {/* Open Camera */}
-                {!isCameraActive &&
-                  !capturedCameraPhoto && (
-                    <CameraControls>
-                      <CameraButton
-                        type="button"
-                        bg="#007bff"
-                        onClick={
-                          startCamera
-                        }
-                      >
-                        <BiIcons.BiCamera
-                          size={22}
-                        />
-                        Open Camera
-                      </CameraButton>
-                    </CameraControls>
-                  )}
-
-                {/* Live Camera */}
-                {isCameraActive && (
-                  <>
-                    <CameraStreamContainer>
-                      <VideoElement
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                      />
-                    </CameraStreamContainer>
-
-                    <CameraControls>
-                      <CameraButton
-                        type="button"
-                        bg="#28a745"
-                        onClick={
-                          takePhotoFromCamera
-                        }
-                      >
-                        <MdIcons.MdCameraAlt
-                          size={22}
-                        />
-                        Take Photo
-                      </CameraButton>
-
-                      <CameraButton
-                        type="button"
-                        bg="#dc3545"
-                        onClick={
-                          stopCameraStream
-                        }
-                      >
-                        <MdIcons.MdClose
-                          size={22}
-                        />
-                        Close Camera
-                      </CameraButton>
-                    </CameraControls>
-                  </>
+                {renderGallery(
+                  outsidePhotos,
+                  setOutsidePhotos,
+                  removeImage
                 )}
 
-                {/* Captured Preview */}
-                {capturedCameraPhoto && (
-                  <>
-                    <CameraStreamContainer>
-                      <CameraCapturedPreview
-                        src={
-                          capturedCameraPhoto
-                        }
-                        alt="Captured camera preview"
-                      />
-                    </CameraStreamContainer>
+                <UploadBox
+                  onDragOver={
+                    handleDragOver
+                  }
+                  onDrop={(e) =>
+                    handleDrop(
+                      e,
+                      setOutsidePhotos
+                    )
+                  }
+                >
 
-                    <CameraControls>
-                      <CameraButton
-                        type="button"
-                        bg="#28a745"
-                        onClick={
-                          addCapturedPhotoToGallery
-                        }
-                      >
-                        <MdIcons.MdAdd
-                          size={22}
-                        />
-                        Add to Property Photos
-                      </CameraButton>
+                  <UploadIcon>
+                    <BiIcons.BiImageAdd />
+                  </UploadIcon>
 
-                      <CameraButton
-                        type="button"
-                        bg="#ff9800"
-                        onClick={
-                          retakeCameraPhoto
-                        }
-                      >
-                        <MdIcons.MdRefresh
-                          size={22}
-                        />
-                        Retake Photo
-                      </CameraButton>
-                    </CameraControls>
-                  </>
+                  <UploadText>
+                    Drag and Drop or
+                    Click{" "}
+                    <span
+                      style={{
+                        color: "blue",
+                      }}
+                    >
+                      Here
+                    </span>{" "}
+                    to upload Outside
+                    Photos
+                  </UploadText>
+
+                  <UploadTypes>
+                    Accepts .jpg, .jpeg,
+                    .png, .svg up to
+                    10 MB each
+                  </UploadTypes>
+
+                  <HiddenInput
+                    type="file"
+                    name="outsideviews"
+                    accept="image/*"
+                    multiple
+                    onChange={
+                      handleOutsideChange
+                    }
+                  />
+
+                </UploadBox>
+
+              </SectionBlock>
+
+              {/* =================================================
+                  INSIDE PHOTOS
+              ================================================= */}
+
+              <SectionBlock>
+
+                <Label>
+                  Photos of Inside the
+                  Apartment:
+                </Label>
+
+                <Description>
+                  Upload photos of
+                  interior rooms, kitchen,
+                  bedrooms, bathrooms,
+                  and other indoor areas.
+                </Description>
+
+                {renderGallery(
+                  insidePhotos,
+                  setInsidePhotos,
+                  removeImage
                 )}
 
-                {/* Hidden canvas used for camera capture */}
-                <CanvasElement
-                  ref={canvasRef}
-                />
-              </CameraSection>
-            </SectionBlock>
+                <UploadBox
+                  onDragOver={
+                    handleDragOver
+                  }
+                  onDrop={(e) =>
+                    handleDrop(
+                      e,
+                      setInsidePhotos
+                    )
+                  }
+                >
 
-            {/* =====================================================
-                ACTION BUTTONS
-            ====================================================== */}
-            <ActionButtons>
-              <Backbutton
-                to="/agency/properties/list-property/step7"
-                sidebar={side}
-                onClick={saveBack}
-              >
-                <MdIcons.MdArrowBack
-                  size={20}
-                  style={{
-                    verticalAlign: "middle",
-                    marginRight: "0.3rem",
-                  }}
-                />
-                Back
-              </Backbutton>
+                  <UploadIcon>
+                    <BiIcons.BiImageAdd />
+                  </UploadIcon>
 
-              <Nextbutton
-                to={path}
-                disabled={disabled}
-                sidebar={side}
-                onClick={handleClick}
-              >
-                Next Step
-                <MdIcons.MdArrowForward
-                  size={20}
-                  style={{
-                    verticalAlign: "middle",
-                    marginLeft: "0.3rem",
-                  }}
-                />
-              </Nextbutton>
-            </ActionButtons>
+                  <UploadText>
+                    Drag and Drop or
+                    Click{" "}
+                    <span
+                      style={{
+                        color: "blue",
+                      }}
+                    >
+                      Here
+                    </span>{" "}
+                    to upload Inside
+                    Photos
+                  </UploadText>
+
+                  <UploadTypes>
+                    Accepts .jpg, .jpeg,
+                    .png, .svg up to
+                    10 MB each
+                  </UploadTypes>
+
+                  <HiddenInput
+                    type="file"
+                    name="insideviews"
+                    accept="image/*"
+                    multiple
+                    onChange={
+                      handleInsideChange
+                    }
+                  />
+
+                </UploadBox>
+
+              </SectionBlock>
+
+              {/* =================================================
+                  OTHER PHOTOS
+              ================================================= */}
+
+              <SectionBlock>
+
+                <Label>
+                  Photos of Any Other
+                  Place of the Apartment:
+                </Label>
+
+                <Description>
+                  Upload photos of common
+                  areas, parking, compound,
+                  amenities, balconies, or
+                  anything else relevant to
+                  the property.
+                </Description>
+
+                {renderGallery(
+                  otherPhotos,
+                  setOtherPhotos,
+                  removeImage
+                )}
+
+                <UploadBox
+                  onDragOver={
+                    handleDragOver
+                  }
+                  onDrop={(e) =>
+                    handleDrop(
+                      e,
+                      setOtherPhotos
+                    )
+                  }
+                >
+
+                  <UploadIcon>
+                    <BiIcons.BiImageAdd />
+                  </UploadIcon>
+
+                  <UploadText>
+                    Drag and Drop or
+                    Click{" "}
+                    <span
+                      style={{
+                        color: "blue",
+                      }}
+                    >
+                      Here
+                    </span>{" "}
+                    to upload Other
+                    Photos
+                  </UploadText>
+
+                  <UploadTypes>
+                    Accepts .jpg, .jpeg,
+                    .png, .svg up to
+                    10 MB each
+                  </UploadTypes>
+
+                  <HiddenInput
+                    type="file"
+                    name="anyotherviews"
+                    accept="image/*"
+                    multiple
+                    onChange={
+                      handleOtherChange
+                    }
+                  />
+
+                </UploadBox>
+
+              </SectionBlock>
+
+              {/* =================================================
+                  CAMERA PHOTOS
+              ================================================= */}
+
+              <SectionBlock>
+
+                <Label>
+                  Camera Captured Photos:
+                </Label>
+
+                <Description>
+                  Take photos directly
+                  using your phone or
+                  computer camera.
+                </Description>
+
+                {/* CAMERA PHOTO GALLERY */}
+
+                {renderGallery(
+                  cameraPhotos,
+                  setCameraPhotos,
+                  (index) =>
+                    removeCameraPhoto(
+                      index
+                    )
+                )}
+
+                <CameraSection>
+
+                  {/* =================================================
+                      OPEN CAMERA BUTTON
+                  ================================================= */}
+
+                  {!isCameraActive &&
+                    !capturedCameraPhoto && (
+                      <CameraControls>
+
+                        <CameraButton
+                          type="button"
+                          bg="#007bff"
+                          onClick={
+                            startCamera
+                          }
+                        >
+
+                          <MdIcons.MdCameraAlt />
+
+                          Open Camera
+
+                        </CameraButton>
+
+                      </CameraControls>
+                    )}
+
+                  {/* =================================================
+                      LIVE CAMERA
+                  ================================================= */}
+
+                  {isCameraActive && (
+                    <>
+
+                      <CameraStreamContainer>
+
+                        <VideoElement
+                          ref={videoRef}
+                          autoPlay
+                          muted
+                          playsInline
+                        />
+
+                      </CameraStreamContainer>
+
+                      <CameraControls>
+
+                        <CameraButton
+                          type="button"
+                          bg="#28a745"
+                          onClick={
+                            takePhotoFromCamera
+                          }
+                        >
+
+                          <MdIcons.MdCameraAlt />
+
+                          Take Photo
+
+                        </CameraButton>
+
+                        <CameraButton
+                          type="button"
+                          bg="#dc3545"
+                          onClick={
+                            stopCameraStream
+                          }
+                        >
+
+                          Close Camera
+
+                        </CameraButton>
+
+                      </CameraControls>
+
+                    </>
+                  )}
+
+                  {/* =================================================
+                      CAPTURED PHOTO PREVIEW
+                  ================================================= */}
+
+                  {capturedCameraPhoto && (
+                    <>
+
+                      <CameraStreamContainer>
+
+                        <CameraCapturedPreview
+                          src={
+                            capturedCameraPhoto.preview
+                          }
+                          alt="Captured camera preview"
+                        />
+
+                      </CameraStreamContainer>
+
+                      <CameraControls>
+
+                        <CameraButton
+                          type="button"
+                          bg="#28a745"
+                          onClick={
+                            addCapturedPhotoToGallery
+                          }
+                        >
+
+                          <MdIcons.MdAddPhotoAlternate />
+
+                          Add to Property
+                          Photos
+
+                        </CameraButton>
+
+                        <CameraButton
+                          type="button"
+                          bg="#ff9800"
+                          onClick={
+                            retakeCameraPhoto
+                          }
+                        >
+
+                          <MdIcons.MdRefresh />
+
+                          Retake Photo
+
+                        </CameraButton>
+
+                      </CameraControls>
+
+                    </>
+                  )}
+
+                </CameraSection>
+
+              </SectionBlock>
+
+              {/* =================================================
+                  HIDDEN CAMERA CANVAS
+              ================================================= */}
+
+              <CanvasElement
+                ref={canvasRef}
+              />
+
+              {/* =================================================
+                  ACTION BUTTONS
+              ================================================= */}
+
+              <ButtonsContainer>
+
+                <Backbutton
+                  to="/properties/list-property/step7"
+                  onClick={saveBack}
+                >
+                  Back
+                </Backbutton>
+
+                <Nextbutton
+                  type="submit"
+                  disabled={disabled}
+                >
+
+                  {uploading
+                    ? "Uploading..."
+                    : "Next Step"}
+
+                </Nextbutton>
+
+              </ButtonsContainer>
+
+            </Form>
+
           </Propertycontainer>
+
         </Listbody>
+
       </Listpropdiv>
-    </>
+
+    </div>
   );
 }
 

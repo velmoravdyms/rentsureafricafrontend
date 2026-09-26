@@ -804,7 +804,14 @@ function Addpropstep12() {
         "propertyname", "totalunits", "availableunits", 
         "landlordname", "landlordemail", "landlordphonenumber", 
         "caretakername", "caretakeremail", "caretakerphonenumber", 
-        "pricesperunit", "propertylocation"
+        "pricesperunit", "propertylocation","propertyId",   
+
+
+
+
+  
+
+
       ];
       keysToClear.forEach(key => localStorage.removeItem(key));
 
