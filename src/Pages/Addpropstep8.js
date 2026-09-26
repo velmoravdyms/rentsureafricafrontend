@@ -1388,16 +1388,36 @@ function Addpropstep8() {
        * also works on phones.
        */
 
-      const stream =
-        await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
+      // const stream =
+      //   await navigator.mediaDevices.getUserMedia({
+      //     video: true,
+      //     audio: false,
+      //   });
+
+      // console.log(
+      //   "Camera stream:",
+      //   stream
+      // );
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" }
+        },
+        audio: false,
+      });
+
 
       console.log(
         "Camera stream:",
         stream
       );
+
+      // videoRef.current.srcObject = stream;
+
+
+
+
+
 
       const videoTrack =
         stream.getVideoTracks()[0];
@@ -2255,6 +2275,218 @@ const uploadAllPhotos = async () => {
                 </ErrorMessage>
               )}
 
+
+
+
+
+
+
+
+
+
+
+
+
+              
+              {/* =================================================
+                  CAMERA PHOTOS
+              ================================================= */}
+
+              <SectionBlock>
+
+                <Label>
+                  Camera Captured Photos:
+                </Label>
+
+                <Description>
+                  Take photos directly
+                  using your phone or
+                  computer camera.
+                </Description>
+
+                {/* CAMERA PHOTO GALLERY */}
+
+                {renderGallery(
+                  cameraPhotos,
+                  setCameraPhotos,
+                  (index) =>
+                    removeCameraPhoto(
+                      index
+                    )
+                )}
+
+                <CameraSection>
+
+                  {/* =================================================
+                      OPEN CAMERA BUTTON
+                  ================================================= */}
+
+                  {!isCameraActive &&
+                    !capturedCameraPhoto && (
+                      <CameraControls>
+
+                        <CameraButton
+                          type="button"
+                          bg="#007bff"
+                          onClick={
+                            startCamera
+                          }
+                        >
+
+                          <MdIcons.MdCameraAlt />
+
+                          Open Camera
+
+                        </CameraButton>
+
+                      </CameraControls>
+                    )}
+
+                  {/* =================================================
+                      LIVE CAMERA
+                  ================================================= */}
+
+                  {isCameraActive && (
+                    <>
+
+                      <CameraStreamContainer>
+
+                        <VideoElement
+                          ref={videoRef}
+                          autoPlay
+                          muted
+                          playsInline
+                        />
+
+                      </CameraStreamContainer>
+
+                      <CameraControls>
+
+                        <CameraButton
+                          type="button"
+                          bg="#28a745"
+                          onClick={
+                            takePhotoFromCamera
+                          }
+                        >
+
+                          <MdIcons.MdCameraAlt />
+
+                          Take Photo
+
+                        </CameraButton>
+
+                        <CameraButton
+                          type="button"
+                          bg="#dc3545"
+                          onClick={
+                            stopCameraStream
+                          }
+                        >
+
+                          Close Camera
+
+                        </CameraButton>
+
+                      </CameraControls>
+
+                    </>
+                  )}
+
+                  {/* =================================================
+                      CAPTURED PHOTO PREVIEW
+                  ================================================= */}
+
+                  {capturedCameraPhoto && (
+                    <>
+
+                      <CameraStreamContainer>
+
+                        <CameraCapturedPreview
+                          src={
+                            capturedCameraPhoto.preview
+                          }
+                          alt="Captured camera preview"
+                        />
+
+                      </CameraStreamContainer>
+
+                      <CameraControls>
+
+                        <CameraButton
+                          type="button"
+                          bg="#28a745"
+                          onClick={
+                            addCapturedPhotoToGallery
+                          }
+                        >
+
+                          <MdIcons.MdAddPhotoAlternate />
+
+                          Add to Property
+                          Photos
+
+                        </CameraButton>
+
+                        <CameraButton
+                          type="button"
+                          bg="#ff9800"
+                          onClick={
+                            retakeCameraPhoto
+                          }
+                        >
+
+                          <MdIcons.MdRefresh />
+
+                          Retake Photo
+
+                        </CameraButton>
+
+                      </CameraControls>
+
+                    </>
+                  )}
+
+                </CameraSection>
+
+              </SectionBlock>
+
+              {/* =================================================
+                  HIDDEN CAMERA CANVAS
+              ================================================= */}
+
+              <CanvasElement
+                ref={canvasRef}
+              />
+
+              {/* =================================================
+                  ACTION BUTTONS
+              ================================================= */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               {/* =================================================
                   OUTSIDE PHOTOS
               ================================================= */}
@@ -2477,180 +2709,6 @@ const uploadAllPhotos = async () => {
 
               </SectionBlock>
 
-              {/* =================================================
-                  CAMERA PHOTOS
-              ================================================= */}
-
-              <SectionBlock>
-
-                <Label>
-                  Camera Captured Photos:
-                </Label>
-
-                <Description>
-                  Take photos directly
-                  using your phone or
-                  computer camera.
-                </Description>
-
-                {/* CAMERA PHOTO GALLERY */}
-
-                {renderGallery(
-                  cameraPhotos,
-                  setCameraPhotos,
-                  (index) =>
-                    removeCameraPhoto(
-                      index
-                    )
-                )}
-
-                <CameraSection>
-
-                  {/* =================================================
-                      OPEN CAMERA BUTTON
-                  ================================================= */}
-
-                  {!isCameraActive &&
-                    !capturedCameraPhoto && (
-                      <CameraControls>
-
-                        <CameraButton
-                          type="button"
-                          bg="#007bff"
-                          onClick={
-                            startCamera
-                          }
-                        >
-
-                          <MdIcons.MdCameraAlt />
-
-                          Open Camera
-
-                        </CameraButton>
-
-                      </CameraControls>
-                    )}
-
-                  {/* =================================================
-                      LIVE CAMERA
-                  ================================================= */}
-
-                  {isCameraActive && (
-                    <>
-
-                      <CameraStreamContainer>
-
-                        <VideoElement
-                          ref={videoRef}
-                          autoPlay
-                          muted
-                          playsInline
-                        />
-
-                      </CameraStreamContainer>
-
-                      <CameraControls>
-
-                        <CameraButton
-                          type="button"
-                          bg="#28a745"
-                          onClick={
-                            takePhotoFromCamera
-                          }
-                        >
-
-                          <MdIcons.MdCameraAlt />
-
-                          Take Photo
-
-                        </CameraButton>
-
-                        <CameraButton
-                          type="button"
-                          bg="#dc3545"
-                          onClick={
-                            stopCameraStream
-                          }
-                        >
-
-                          Close Camera
-
-                        </CameraButton>
-
-                      </CameraControls>
-
-                    </>
-                  )}
-
-                  {/* =================================================
-                      CAPTURED PHOTO PREVIEW
-                  ================================================= */}
-
-                  {capturedCameraPhoto && (
-                    <>
-
-                      <CameraStreamContainer>
-
-                        <CameraCapturedPreview
-                          src={
-                            capturedCameraPhoto.preview
-                          }
-                          alt="Captured camera preview"
-                        />
-
-                      </CameraStreamContainer>
-
-                      <CameraControls>
-
-                        <CameraButton
-                          type="button"
-                          bg="#28a745"
-                          onClick={
-                            addCapturedPhotoToGallery
-                          }
-                        >
-
-                          <MdIcons.MdAddPhotoAlternate />
-
-                          Add to Property
-                          Photos
-
-                        </CameraButton>
-
-                        <CameraButton
-                          type="button"
-                          bg="#ff9800"
-                          onClick={
-                            retakeCameraPhoto
-                          }
-                        >
-
-                          <MdIcons.MdRefresh />
-
-                          Retake Photo
-
-                        </CameraButton>
-
-                      </CameraControls>
-
-                    </>
-                  )}
-
-                </CameraSection>
-
-              </SectionBlock>
-
-              {/* =================================================
-                  HIDDEN CAMERA CANVAS
-              ================================================= */}
-
-              <CanvasElement
-                ref={canvasRef}
-              />
-
-              {/* =================================================
-                  ACTION BUTTONS
-              ================================================= */}
 
               <ButtonsContainer>
 
