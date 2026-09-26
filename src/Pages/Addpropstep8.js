@@ -2655,7 +2655,7 @@ const uploadAllPhotos = async () => {
               <ButtonsContainer>
 
                 <Backbutton
-                  to="/properties/list-property/step7"
+                  to="/agency/properties/list-property/step7"
                   onClick={saveBack}
                 >
                   Back

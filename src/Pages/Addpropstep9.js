@@ -874,7 +874,7 @@ function Addpropstep9() {
               </Landlordphonenumber>
 
               <div style={{ width: "100%", margin: "1rem 0rem 1rem 1rem" }}>
-                <Backbutton to="/properties/list-property/step6" onClick={saveBack} sidebar={side ? 1 : 0}>Back</Backbutton>
+                <Backbutton to="/agency/properties/list-property/step6" onClick={saveBack} sidebar={side ? 1 : 0}>Back</Backbutton>
 
                 {disabled ? (
                   <Button disableed={disabled ? 1 : 0} style={{ padding: "0.5rem 1rem", margin: "0.5rem" }}>Next Step</Button>

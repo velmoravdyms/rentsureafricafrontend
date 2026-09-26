@@ -320,7 +320,7 @@ function Addpropstep5 (){
                             </Listingpurposediv>
                             
                             <div style={{ width:"100%", margin:"2rem 0rem 2rem 1rem"}}>
-                              <Backbutton to="/properties/list-property/step4" onClick={saveBack} sidebar={side? 1:0}>Back</Backbutton>  
+                              <Backbutton to="/agency/properties/list-property/step4" onClick={saveBack} sidebar={side? 1:0}>Back</Backbutton>  
                               <Nextbutton to={path}  onClick={saveDraft} disabled={disabled? 1:0}>Next Step</Nextbutton> 
                             </div>
                         </Form>  
