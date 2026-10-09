@@ -10,7 +10,8 @@ import React, {
 
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
-import { ControlPosition } from "@vis.gl/react-google-maps";
+
+
 
 import {
   APIProvider,
@@ -32,6 +33,11 @@ import { Circle } from "./circle";
 /* ============================================================
    TYPES & INTERFACES
 ============================================================ */
+
+
+// Dynamically target process.env or fallback to localhost
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 
 export interface PropertyListing {
   id: string;
@@ -589,7 +595,7 @@ const SetPoiMarkers: React.FC = () => {
       let fetchedRecords: PropertyListing[] = [];
 
       try {
-        const response = await fetch("http://localhost:8000/api/public/listings/properties");
+        const response = await fetch(`${BASE_URL}/api/public/listings/properties`);
 
         if (response.ok) {
           const contentType = response.headers.get("content-type");
