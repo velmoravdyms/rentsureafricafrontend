@@ -10,6 +10,7 @@ import React, {
 
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
+import { ControlPosition } from "@vis.gl/react-google-maps";
 
 import {
   APIProvider,
@@ -25,6 +26,8 @@ import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import type { Marker } from "@googlemaps/markerclusterer";
 
 import { Circle } from "./circle";
+
+
 
 /* ============================================================
    TYPES & INTERFACES
@@ -819,8 +822,9 @@ const SetPoiMarkers: React.FC = () => {
               mapId="a99c0ae2ccbc0904"
               mapTypeControl={true}
               mapTypeControlOptions={{
-                position: google.maps.ControlPosition.TOP_RIGHT,
-              }}
+                position: 3, // 3 represents TOP_RIGHT in Google Maps JS API, or use import { ControlPosition }
+              }}  
+              
             >
               <PanMapToSelectedLocation location={searchLocation} />
               <ViewportTracker onBoundsChange={setMapBounds} />
