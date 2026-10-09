@@ -26,6 +26,7 @@ const DEFAULT_LOCATION = {
 };
 
 
+
 // ============================================================
 // STYLES
 // ============================================================
@@ -836,7 +837,7 @@ const RenderGoogleMap = () => {
   // ==========================================================
 
   const GOOGLE_MAPS_API_KEY =
-    process.env.GOOGLE_MAPS_API_KEY || "AIzaSyC61R7BevXG7uOoAAWEaxSoDYs0ldNwrT4"
+    process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "AIzaSyBSX6v7tOTV3DCOynM6LAAD77iuhthjNLI"
 
 
   // ==========================================================
