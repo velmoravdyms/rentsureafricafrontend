@@ -1,721 +1,25 @@
 
 
-// import React, { useState, useContext, useRef, useCallback, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import styled from '@emotion/styled';
-// import { APIProvider, Map, MapCameraChangedEvent, useMap, Pin, AdvancedMarker, MapMouseEvent } from "@vis.gl/react-google-maps";
-// import { MarkerClusterer } from "@googlemaps/markerclusterer";
-// import type { Marker } from "@googlemaps/markerclusterer";
 
-// import { Circle } from "./circle";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+} from "react";
 
-// // Top Header Bar
-// const TopNavbar = styled.div`
-//   display: flex;
-//   justify-content: flex-end;
-//   align-items: center;
-//   gap: 1rem;
-//   padding: 1rem 2.5rem;
-//   width: 100%;
-//   box-sizing: border-box;
-// `;
-
-// // Navigation Buttons Container
-// const AuthNavGroup = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 1rem;
-// `;
-
-// // Base Styled Link Buttons
-// const NavAuthLink = styled(Link)`
-//   padding: 0.6rem 1.4rem;
-//   border-radius: 8px;
-//   font-weight: 600;
-//   font-size: 0.95rem;
-//   text-decoration: none;
-//   color: white;
-//   transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
-
-//   &:hover {
-//     opacity: 0.9;
-//   }
-
-//   &:active {
-//     transform: translateY(1px);
-//   }
-// `;
-
-// const SignInButton = styled(NavAuthLink)`
-//   background-color: #28a745; /* Green */
-// `;
-
-// const SignUpButton = styled(NavAuthLink)`
-//   background-color: #0056b3; /* Blue */
-// `;
-
-// const Rendermap = styled.div`
-//   width: 90vw;
-//   height: 80vh;
-//   margin: 1rem auto;
-// `;
-
-// type Poi = { key: string, location: google.maps.LatLngLiteral }
-
-// const locations: Poi[] = [
-//   { "key": "location_1", "location": { "lat": -1.215449, "lng": 36.713322 } },
-//   { "key": "location_2", "location": { "lat": -1.186124, "lng": 36.787967 } },
-//   { "key": "location_3", "location": { "lat": -1.182669, "lng": 36.709271 } },
-//   { "key": "location_4", "location": { "lat": -1.255317, "lng": 36.765456 } },
-//   { "key": "location_5", "location": { "lat": -1.214571, "lng": 36.726125 } },
-//   { "key": "location_6", "location": { "lat": -1.197829, "lng": 36.77232 } },
-//   { "key": "location_7", "location": { "lat": -1.176802, "lng": 36.743083 } },
-//   { "key": "location_8", "location": { "lat": -1.184327, "lng": 36.734378 } },
-//   { "key": "location_9", "location": { "lat": -1.168402, "lng": 36.77757 } },
-//   { "key": "location_10", "location": { "lat": -1.208586, "lng": 36.714377 } },
-//   { "key": "location_11", "location": { "lat": -1.214216, "lng": 36.709459 } },
-//   { "key": "location_12", "location": { "lat": -1.239433, "lng": 36.764962 } },
-//   { "key": "location_13", "location": { "lat": -1.196724, "lng": 36.747509 } },
-//   { "key": "location_14", "location": { "lat": -1.21947, "lng": 36.749931 } },
-//   { "key": "location_15", "location": { "lat": -1.187235, "lng": 36.764809 } },
-//   { "key": "EasySmartLiving GMBH", "location": { "lat": -1.2130818115522617, "lng": 36.755292174770545 } }
-// ];
-
-// const PoiMarkers = (prop: { pois: Poi[] }) => {
-//   const map = useMap();
-//   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({})
-//   const clusterer = useRef<MarkerClusterer | null>(null)
-//   const [circleCenter, setCircleCenter] = useState<google.maps.LatLng | null>(null)
-
-//   useEffect(() => {
-//     if (!map) return;
-//     if (!clusterer.current) {
-//       clusterer.current = new MarkerClusterer({ map });
-//     }
-//   }, [map]);
-
-//   useEffect(() => {
-//     clusterer.current?.clearMarkers();
-//     clusterer.current?.addMarkers(Object.values(markers))
-//   }, [markers])
-
-//   const setMarkerRef = (marker: Marker | null, key: string) => {
-//     if (!marker && !markers[key]) return;
-//     if (marker && markers[key]) return;
-
-//     setMarkers(prev => {
-//       if (marker) {
-//         return { ...prev, [key]: marker };
-//       } else {
-//         const newMarkers = { ...prev };
-//         delete newMarkers[key];
-//         return newMarkers;
-//       }
-//     })
-//   }
-
-//   const handleMarkerClicked = useCallback((ev: google.maps.MapMouseEvent) => {
-//     if (!map) return;
-//     if (!ev.latLng) return;
-
-//     map.panTo(ev.latLng);
-//     setCircleCenter(ev.latLng)
-//   }, [map])
-
-//   return (
-//     <>
-//       <Circle
-//         radius={1000}
-//         center={circleCenter}
-//         strokeColor={'#0c4cb3'}
-//         strokeOpacity={1}
-//         strokeWeight={3}
-//         fillColor={'#3b82f6'}
-//         fillOpacity={0.3}
-//       />
-
-//       {prop.pois.map((poi: Poi) => (
-//         <AdvancedMarker
-//           key={poi.key}
-//           position={poi.location}
-//           ref={marker => { setMarkerRef(marker, poi.key) }}
-//           onClick={handleMarkerClicked}
-//           clickable={true}
-//         >
-//           <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} />
-//         </AdvancedMarker>
-//       ))}
-//     </>
-//   )
-// }
-
-// const SetPoiMarkers: React.FC<{}> = () => {
-
-//   const handleWholemapClick = useCallback((event: MapMouseEvent) => {
-//     if (!Map) return;
-//     console.log("The Marker :", event.domEvent, " as String Was just Clicked")
-//   }, [])
-
-//   return (
-//     <>
-//       <TopNavbar>
-//         <AuthNavGroup>
-//           <SignInButton to="/signin">SIGN IN</SignInButton>
-//           <SignUpButton to="/signup">SIGN UP</SignUpButton>
-//         </AuthNavGroup>
-//       </TopNavbar>
-
-//       <APIProvider apiKey="AIzaSyDh24myqfCyNOFptpEBjwBOt0BNDoNipv8" onLoad={() => console.log("GOOGLE MAPS JUST GOT LOADED")}>
-//         <Rendermap>
-//           <Map
-//             style={{ height: "100%", width: "100%" }}
-//             defaultCenter={{ lng: 36.7523, lat: -1.2124525 }}
-//             defaultZoom={13}
-//             disableDefaultUI={true}
-//             mapId="a99c0ae2ccbc0904"
-//             zoomControl={true}
-//             fullscreenControl={true}
-//             mapTypeId="hybrid"
-//             onCameraChanged={(evt: MapCameraChangedEvent) => {
-//               console.log("Camera Changed : ", evt.detail.center, "Zoom Changed a Zoom Event :", evt.detail.zoom)
-//             }}
-//             onClick={handleWholemapClick}
-//           >
-//             <PoiMarkers pois={locations} />
-//           </Map>
-//         </Rendermap>
-//       </APIProvider>
-//     </>
-//   )
-// };
-
-// export default SetPoiMarkers;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //@ts-nocheck
-// import React, { useState, useRef, useCallback, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import styled from "@emotion/styled";
-// import {
-//   APIProvider,
-//   Map,
-//   useMap,
-//   Pin,
-//   AdvancedMarker,
-//   MapMouseEvent,
-//   MapCameraChangedEvent,
-// } from "@vis.gl/react-google-maps";
-// import {
-//   APILoader,
-//   PlacePicker,
-// } from "@googlemaps/extended-component-library/react";
-
-// import { MarkerClusterer } from "@googlemaps/markerclusterer";
-// import type { Marker } from "@googlemaps/markerclusterer";
-
-// import { Circle } from "./circle";
-
-// // ============================================================
-// // TYPES & INTERFACES
-// // ============================================================
-
-// export interface PropertyListing {
-//   id: string;
-//   title: string;
-//   price?: string | number;
-//   latitude: number;
-//   longitude: number;
-//   formattedAddress?: string;
-//   availableUnits?: number;
-//   totalUnits?: number;
-//   images?: string[];
-// }
-
-// // ============================================================
-// // STYLED COMPONENTS
-// // ============================================================
-
-// const PageContainer = styled.div`
-//   width: 100%;
-//   min-height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   background-color: #f8f9fa;
-// `;
-
-// const TopNavbar = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   gap: 1rem;
-//   padding: 1rem 2.5rem;
-//   width: 100%;
-//   box-sizing: border-box;
-//   background: #ffffff;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-//   @media (max-width: 768px) {
-//     padding: 1rem;
-//     flex-direction: column;
-//     gap: 0.8rem;
-//   }
-// `;
-
-// const BrandLogo = styled(Link)`
-//   font-size: 1.35rem;
-//   font-weight: 800;
-//   color: #1a1a1a;
-//   text-decoration: none;
-//   letter-spacing: -0.5px;
-
-//   span {
-//     color: #0056b3;
-//   }
-// `;
-
-// const AuthNavGroup = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 1rem;
-// `;
-
-// const NavAuthLink = styled(Link)`
-//   padding: 0.6rem 1.4rem;
-//   border-radius: 8px;
-//   font-weight: 600;
-//   font-size: 0.95rem;
-//   text-decoration: none;
-//   color: white;
-//   transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
-
-//   &:hover {
-//     opacity: 0.9;
-//   }
-
-//   &:active {
-//     transform: translateY(1px);
-//   }
-// `;
-
-// const SignInButton = styled(NavAuthLink)`
-//   background-color: #28a745;
-// `;
-
-// const SignUpButton = styled(NavAuthLink)`
-//   background-color: #0056b3;
-// `;
-
-// const MainContent = styled.div`
-//   position: relative;
-//   width: 92vw;
-//   height: 82vh;
-//   margin: 1rem auto;
-//   border-radius: 12px;
-//   overflow: hidden;
-//   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
-// `;
-
-// const SearchOverlay = styled.div`
-//   position: absolute;
-//   top: 16px;
-//   left: 16px;
-//   z-index: 10;
-//   width: 360px;
-//   max-width: calc(100% - 32px);
-//   background: #ffffff;
-//   padding: 10px;
-//   border-radius: 10px;
-//   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-
-//   gmpx-place-picker {
-//     width: 100%;
-//     display: block;
-//   }
-// `;
-
-// const Rendermap = styled.div`
-//   width: 100%;
-//   height: 100%;
-// `;
-
-// const LoadingOverlay = styled.div`
-//   position: absolute;
-//   bottom: 20px;
-//   right: 20px;
-//   z-index: 10;
-//   background: rgba(255, 255, 255, 0.92);
-//   padding: 8px 16px;
-//   border-radius: 20px;
-//   font-size: 0.85rem;
-//   font-weight: 600;
-//   color: #333;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-// `;
-
-// // ============================================================
-// // MAP PAN HELPER COMPONENT
-// // ============================================================
-
-// const PanMapToSelectedLocation: React.FC<{
-//   location: google.maps.LatLngLiteral | null;
-// }> = ({ location }) => {
-//   const map = useMap();
-
-//   useEffect(() => {
-//     if (!map || !location) return;
-//     map.panTo(location);
-//     map.setZoom(14);
-//   }, [map, location]);
-
-//   return null;
-// };
-
-
-// const PropertyMarkers: React.FC<{ properties: PropertyListing[] }> = ({
-//   properties,
-// }) => {
-//   const map = useMap();
-//   const [markers, setMarkers] = useState<{ [key: string]: Marker }>({});
-//   const clusterer = useRef(null);
-//   const [circleCenter, setCircleCenter] =
-//     useState(null);
-
-//   useEffect(() => {
-//     if (!map) return;
-//     if (!clusterer.current) {
-//       clusterer.current = new MarkerClusterer({ map });
-//     }
-//   }, [map]);
-
-//   useEffect(() => {
-//     clusterer.current?.clearMarkers();
-//     clusterer.current?.addMarkers(Object.values(markers));
-//   }, [markers]);
-
-//   const setMarkerRef = (marker: Marker | null, key: string) => {
-//     if (!marker && !markers[key]) return;
-//     if (marker && markers[key]) return;
-
-//     setMarkers((prev) => {
-//       if (marker) {
-//         return { ...prev, [key]: marker };
-//       } else {
-//         const newMarkers = { ...prev };
-//         delete newMarkers[key];
-//         return newMarkers;
-//       }
-//     });
-//   };
-
-//   const handleMarkerClicked = useCallback(
-//     (ev: google.maps.MapMouseEvent) => {
-//       if (!map || !ev.latLng) return;
-//       const latLng = { lat: ev.latLng.lat(), lng: ev.latLng.lng() };
-//       map.panTo(latLng);
-//       setCircleCenter(latLng);
-//     },
-//     [map]
-//   );
-
-    
-//   return (
-//       <>
-//         {properties.map((prop) => (
-//           setMarkerRef(marker, prop.id)}
-//             onClick={handleMarkerClicked}
-//             clickable={true}
-//           >
-            
-          
-//         ))}
-      
-//     );
-
-
-
-// };
-
-// // ============================================================
-// // MAIN PUBLIC MAP MARKETPLACE COMPONENT
-// // ============================================================
-
-// const SetPoiMarkers: React.FC = () => {
-//   const GOOGLE_MAPS_API_KEY =
-//     process.env.GOOGLE_MAPS_API_KEY ||
-//     "AIzaSyDh24myqfCyNOFptpEBjwBOt0BNDoNipv8";
-
-//   const [properties, setProperties] = useState([]);
-//   const [searchLocation, setSearchLocation] =
-//     useState(null);
-//   const [isLoading, setIsLoading] = useState(true);
-
-//   // ==========================================================
-//   // FETCH DATABASE PROPERTIES
-//   // ==========================================================
-//   useEffect(() => {
-//     const fetchPropertiesFromDB = async () => {
-//       setIsLoading(true);
-//       try {
-//         // REPLACE THIS URL WITH YOUR ACTUAL API ENDPOINT:
-//         // const response = await fetch('/api/properties/public');
-//         // const data = await response.json();
-
-//         // SIMULATED DATABASE FETCH:
-//         const dbRecords: PropertyListing[] = [
-//           {
-//             id: "prop_1",
-//             title: "Kilimani Heights Apartment",
-//             latitude: -1.2884,
-//             longitude: 36.7822,
-//             price: "KES 45,000",
-//             formattedAddress: "Kilimani, Nairobi",
-//           },
-//           {
-//             id: "prop_2",
-//             title: "Westlands Luxury Suites",
-//             latitude: -1.2676,
-//             longitude: 36.8121,
-//             price: "KES 60,000",
-//             formattedAddress: "Westlands, Nairobi",
-//           },
-//           {
-//             id: "prop_3",
-//             title: "Kericho Town Center Plaza",
-//             latitude: -0.3689,
-//             longitude: 35.2863,
-//             price: "KES 25,000",
-//             formattedAddress: "Kericho, Kenya",
-//           },
-//         ];
-
-//         // Also merge local step 11 property if present for live testing
-//         const savedDraft = localStorage.getItem("propertylocation");
-//         if (savedDraft) {
-//           try {
-//             const parsedDraft = JSON.parse(savedDraft);
-//             if (parsedDraft.latitude && parsedDraft.longitude) {
-//               dbRecords.push({
-//                 id: "draft_pinned_property",
-//                 title: "Newly Pinned Property (Draft)",
-//                 latitude: parsedDraft.latitude,
-//                 longitude: parsedDraft.longitude,
-//                 formattedAddress: parsedDraft.formattedAddress || "Pinned Location",
-//                 price: "KES --",
-//               });
-//             }
-//           } catch (e) {
-//             console.error("Draft location parse error:", e);
-//           }
-//         }
-
-//         setProperties(dbRecords);
-//       } catch (error) {
-//         console.error("Failed to fetch property records:", error);
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     };
-
-//     fetchPropertiesFromDB();
-//   }, []);
-
-//   // ==========================================================
-//   // PLACE AUTOCOMPLETE HANDLER
-//   // ==========================================================
-//   const handlePlaceChange = (e: any) => {
-//     if (!e?.target?.value) return;
-
-//     const place = e.target.value;
-//     if (!place.location) return;
-
-//     const newLocation = {
-//       lat: place.location.lat(),
-//       lng: place.location.lng(),
-//     };
-
-//     console.log("Navigating public map to:", newLocation);
-//     setSearchLocation(newLocation);
-//   };
-
-//   const handleWholemapClick = useCallback((event: MapMouseEvent) => {
-//     console.log("Map background clicked:", event.detail.latLng);
-//   }, []);
-
-//   return (
-    
-
-//       {/* TOP BAR NAVIGATION */}
-      
-        
-//           RentSureMarketplace
-        
-
-        
-//           SIGN IN
-//           SIGN UP
-        
-      
-
-//       {/* MAP & SEARCH CONTAINER */}
-      
-//          console.log("Google Maps loaded successfully")}
-//         >
-//           {/* SEARCH AUTOCOMPLETE OVERLAY */}
-          
-            
-            
-          
-
-          
-//              {
-//                 console.log("Public Camera Center:", evt.detail.center);
-//               }}
-//               onClick={handleWholemapClick}
-//             >
-//               {/* PAN HELPER FOR AUTOCOMPLETE SEARCH */}
-              
-
-//               {/* DYNAMIC DATABASE MARKERS */}
-              
-            
-          
-
-//           {isLoading && Loading properties...}
-        
-      
-    
-//   );
-// };
-
-// export default SetPoiMarkers;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//@ts-nocheck
-import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
+
 import {
   APIProvider,
   Map,
   useMap,
+  useMapsLibrary,
   Pin,
   AdvancedMarker,
-  MapMouseEvent,
-  MapCameraChangedEvent,
+  InfoWindow,
 } from "@vis.gl/react-google-maps";
-import {
-  APILoader,
-  PlacePicker,
-} from "@googlemaps/extended-component-library/react";
 
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import type { Marker } from "@googlemaps/markerclusterer";
@@ -723,7 +27,7 @@ import type { Marker } from "@googlemaps/markerclusterer";
 import { Circle } from "./circle";
 
 /* ============================================================
-   TYPES
+   TYPES & INTERFACES
 ============================================================ */
 
 export interface PropertyListing {
@@ -737,6 +41,36 @@ export interface PropertyListing {
   totalUnits?: number;
   images?: string[];
 }
+
+export interface SelectedLocation {
+  lat: number;
+  lng: number;
+  displayName?: string;
+  formattedAddress?: string;
+  viewport?: any;
+}
+
+interface PlaceSearchInputProps {
+  onPlaceSelect: (location: SelectedLocation) => void;
+}
+
+interface PanMapToSelectedLocationProps {
+  location: SelectedLocation | null;
+}
+
+interface PropertyMarkersProps {
+  properties: PropertyListing[];
+  selectedProperty: PropertyListing | null;
+  hoveredProperty: PropertyListing | null;
+  onSelectProperty: (property: PropertyListing | null) => void;
+  onHoverProperty: (property: PropertyListing | null) => void;
+}
+
+/* ============================================================
+   STABLE GOOGLE MAPS LIBRARIES
+============================================================ */
+
+const LIBRARIES = ["places"];
 
 /* ============================================================
    STYLES
@@ -796,12 +130,96 @@ const SignUpButton = styled(NavButton)`
   background: #0056b3;
 `;
 
+/* 2-COLUMN FLEX CONTAINER */
 const MainContent = styled.div`
-  width: 92vw;
+  width: 95vw;
   height: 82vh;
   margin: 1rem auto;
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
+  display: flex;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+`;
+
+const SidebarContainer = styled.div<{ isCollapsed: boolean }>`
+  position: relative;
+  width: ${(props) => (props.isCollapsed ? "0px" : "380px")};
+  min-width: ${(props) => (props.isCollapsed ? "0px" : "320px")};
+  height: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+`;
+
+const Sidebar = styled.div<{ isCollapsed: boolean }>`
+  width: 380px;
+  min-width: 320px;
+  height: 100%;
+  background: #ffffff;
+  border-right: 1px solid #e9ecef;
+  overflow-y: auto;
+  padding: ${(props) => (props.isCollapsed ? "0" : "1rem")};
+  opacity: ${(props) => (props.isCollapsed ? 0 : 1)};
+  pointer-events: ${(props) => (props.isCollapsed ? "none" : "auto")};
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  transition: opacity 0.2s ease;
+`;
+
+const CollapseToggleButton = styled.button<{ isCollapsed: boolean }>`
+  position: absolute;
+  top: 50%;
+  right: -24px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  font-size: 11px;
+  color: #374151;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+    color: #0056b3;
+  }
+`;
+
+const PropertyCard = styled.div<{ isSelected?: boolean; isHovered?: boolean }>`
+  padding: 1rem;
+  border-radius: 8px;
+  background: ${(props) =>
+    props.isSelected
+      ? "#f0f7ff"
+      : props.isHovered
+      ? "#f9fafb"
+      : "#ffffff"};
+  border: 1px solid
+    ${(props) =>
+      props.isSelected ? "#0056b3" : props.isHovered ? "#93c5fd" : "#e9ecef"};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+
+  &:hover {
+    border-color: #0056b3;
+    transform: translateY(-1px);
+  }
+`;
+
+const Rendermap = styled.div`
+  flex: 1;
+  height: 100%;
   position: relative;
 `;
 
@@ -809,23 +227,18 @@ const SearchOverlay = styled.div`
   position: absolute;
   top: 16px;
   left: 16px;
-  width: 360px;
+  width: 320px;
   max-width: calc(100% - 32px);
+  z-index: 1000;
   background: white;
-  padding: 10px;
+  padding: 8px;
   border-radius: 10px;
-  z-index: 10;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-  gmpx-place-picker {
+  gmp-place-autocomplete {
     width: 100%;
     display: block;
   }
-`;
-
-const Rendermap = styled.div`
-  width: 100%;
-  height: 100%;
 `;
 
 const LoadingOverlay = styled.div`
@@ -840,16 +253,110 @@ const LoadingOverlay = styled.div`
 `;
 
 /* ============================================================
-   PAN TO SEARCH RESULT
+   GOOGLE PLACES AUTOCOMPLETE + ENTER KEY GEOCODING
 ============================================================ */
 
-const PanMapToSelectedLocation = ({ location }) => {
+const PlaceSearchInput: React.FC<PlaceSearchInputProps> = ({ onPlaceSelect }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const places = useMapsLibrary("places");
+  const geocoding = useMapsLibrary("geocoding");
+
+  const handlePlaceSelect = useCallback(
+    async (event: any) => {
+      try {
+        const placePrediction = event?.placePrediction;
+        if (!placePrediction) return;
+
+        const place = placePrediction.toPlace();
+        if (!place) return;
+
+        await place.fetchFields({
+          fields: ["location", "displayName", "formattedAddress", "viewport"],
+        });
+
+        if (!place.location) return;
+
+        onPlaceSelect({
+          lat: place.location.lat(),
+          lng: place.location.lng(),
+          displayName: place.displayName || "",
+          formattedAddress: place.formattedAddress || "",
+          viewport: place.viewport || null,
+        });
+      } catch (error) {
+        console.error("Error selecting Google Places location:", error);
+      }
+    },
+    [onPlaceSelect]
+  );
+
+  useEffect(() => {
+    if (!places || !containerRef.current) return;
+
+    containerRef.current.innerHTML = "";
+
+    const PlacesLib = places as any;
+    if (!PlacesLib.PlaceAutocompleteElement) return;
+
+    const autocomplete = new PlacesLib.PlaceAutocompleteElement();
+    autocomplete.includedRegionCodes = ["ke"];
+    autocomplete.placeholder = "Search location & hit Enter...";
+
+    autocomplete.addEventListener("gmp-select", handlePlaceSelect);
+
+    // Fallback Geocoding on Enter Key Press
+    autocomplete.addEventListener("keydown", async (e: KeyboardEvent) => {
+      if (e.key === "Enter" && geocoding) {
+        const inputVal = (e.target as any)?.value;
+        if (inputVal && inputVal.trim() !== "") {
+          const geocoder = new geocoding.Geocoder();
+          geocoder.geocode({ address: inputVal + ", Kenya" }, (results, status) => {
+            if (status === "OK" && results && results[0]?.geometry?.location) {
+              const loc = results[0].geometry.location;
+              onPlaceSelect({
+                lat: loc.lat(),
+                lng: loc.lng(),
+                formattedAddress: results[0].formatted_address,
+              });
+            }
+          });
+        }
+      }
+    });
+
+    containerRef.current.appendChild(autocomplete);
+
+    return () => {
+      autocomplete.removeEventListener("gmp-select", handlePlaceSelect);
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+      }
+    };
+  }, [places, geocoding, handlePlaceSelect, onPlaceSelect]);
+
+  return <div ref={containerRef} />;
+};
+
+/* ============================================================
+   PAN MAP TO SELECTED LOCATION
+============================================================ */
+
+const PanMapToSelectedLocation: React.FC<PanMapToSelectedLocationProps> = ({ location }) => {
   const map = useMap();
 
   useEffect(() => {
     if (!map || !location) return;
 
-    map.panTo(location);
+    if (
+      typeof location.lat !== "number" ||
+      typeof location.lng !== "number"
+    ) return;
+
+    map.panTo({
+      lat: location.lat,
+      lng: location.lng,
+    });
+
     map.setZoom(14);
   }, [map, location]);
 
@@ -857,84 +364,184 @@ const PanMapToSelectedLocation = ({ location }) => {
 };
 
 /* ============================================================
-   PROPERTY MARKERS
+   MAP VIEWPORT BOUNDS TRACKER
 ============================================================ */
 
-
-const PropertyMarkers = ({ properties }) => {
+const ViewportTracker: React.FC<{
+  onBoundsChange: (bounds: google.maps.LatLngBounds | null) => void;
+}> = ({ onBoundsChange }) => {
   const map = useMap();
 
+  useEffect(() => {
+    if (!map) return;
+
+    const listener = map.addListener("bounds_changed", () => {
+      const bounds = map.getBounds();
+      onBoundsChange(bounds || null);
+    });
+
+    onBoundsChange(map.getBounds() || null);
+
+    return () => {
+      google.maps.event.removeListener(listener);
+    };
+  }, [map, onBoundsChange]);
+
+  return null;
+};
+
+/* ============================================================
+   PROPERTY MARKERS & IMPROVED INFOWINDOW HOVER/CLICK
+============================================================ */
+
+const PropertyMarkers: React.FC<PropertyMarkersProps> = ({
+  properties,
+  selectedProperty,
+  hoveredProperty,
+  onSelectProperty,
+  onHoverProperty,
+}) => {
+  const map = useMap();
   const clusterer = useRef<MarkerClusterer | null>(null);
   const markersRef = useRef<Record<string, Marker>>({});
+  const [circleCenter, setCircleCenter] = useState<{ lat: number; lng: number } | null>(null);
 
-  const [circleCenter, setCircleCenter] = useState(null);
-
-  // Create clusterer once
   useEffect(() => {
     if (!map || clusterer.current) return;
 
     clusterer.current = new MarkerClusterer({ map });
+
+    return () => {
+      if (clusterer.current) {
+        clusterer.current.clearMarkers();
+        clusterer.current.setMap(null);
+        clusterer.current = null;
+      }
+    };
   }, [map]);
 
-  // Update clusters whenever markers change
-  const refreshClusters = () => {
+  const refreshClusters = useCallback(() => {
     if (!clusterer.current) return;
 
     clusterer.current.clearMarkers();
-    clusterer.current.addMarkers(Object.values(markersRef.current));
-  };
+    const markers = Object.values(markersRef.current).filter(Boolean);
 
-  const setMarkerRef = useCallback((marker: Marker | null, key: string) => {
-    if (marker) {
-      // Don't update if it's the same marker
-      if (markersRef.current[key] === marker) return;
-
-      markersRef.current[key] = marker;
-    } else {
-      delete markersRef.current[key];
+    if (markers.length > 0) {
+      clusterer.current.addMarkers(markers);
     }
-
-    refreshClusters();
   }, []);
 
+  const setMarkerRef = useCallback(
+    (marker: Marker | null, key: string) => {
+      if (marker) {
+        if (markersRef.current[key] === marker) return;
+        markersRef.current[key] = marker;
+      } else {
+        delete markersRef.current[key];
+      }
+
+      refreshClusters();
+    },
+    [refreshClusters]
+  );
+
+  useEffect(() => {
+    refreshClusters();
+  }, [properties, refreshClusters]);
+
   const handleMarkerClicked = useCallback(
-    (ev: google.maps.MapMouseEvent) => {
-      if (!map || !ev.latLng) return;
+    (property: PropertyListing) => {
+      if (!map) return;
 
-      const center = {
-        lat: ev.latLng.lat(),
-        lng: ev.latLng.lng(),
-      };
-
+      const center = { lat: property.latitude, lng: property.longitude };
       map.panTo(center);
       setCircleCenter(center);
+      onSelectProperty(property);
     },
-    [map]
+    [map, onSelectProperty]
   );
+
+  // Clicked takes precedence over Hover preview
+  const activeInfoWindowProperty = selectedProperty || hoveredProperty;
+  const isHoverOnly = !selectedProperty && !!hoveredProperty;
 
   return (
     <>
-      {properties.map((property) => (
-        <AdvancedMarker
-          key={property.id}
-          position={{
-            lat: property.latitude,
-            lng: property.longitude,
-          }}
-          ref={(marker) => setMarkerRef(marker, property.id)}
-          onClick={handleMarkerClicked}
-          clickable
-        >
-          <Pin
-            // background="#0056b3"
-            background="yellow"
-            borderColor="#003f8a"
-            // glyphColor="#fff"
-            glyphColor="black"
-            scale={1.4}
+      {properties.map((property) => {
+        if (
+          typeof property.latitude !== "number" ||
+          typeof property.longitude !== "number" ||
+          Number.isNaN(property.latitude) ||
+          Number.isNaN(property.longitude)
+        ) {
+          return null;
+        }
+
+        const isSelected = selectedProperty?.id === property.id;
+        const isHovered = hoveredProperty?.id === property.id;
+
+        return (
+          <AdvancedMarker
+            key={property.id}
+            position={{
+              lat: property.latitude,
+              lng: property.longitude,
+            }}
+            ref={(marker) => setMarkerRef(marker as Marker | null, property.id)}
+            onClick={() => handleMarkerClicked(property)}
+            onMouseEnter={() => onHoverProperty(property)}
+            onMouseLeave={() => onHoverProperty(null)}
+            clickable
+          >
+            <Pin
+              background={isSelected ? "#0056b3" : isHovered ? "#2563eb" : "yellow"}
+              borderColor="#003f8a"
+              glyphColor={isSelected || isHovered ? "white" : "black"}
+              scale={isSelected ? 1.4 : isHovered ? 1.3 : 1.2}
             />
-        </AdvancedMarker>
-      ))}
+          </AdvancedMarker>
+        );
+      })}
+
+      {/* Offset InfoWindow floating above marker pins without covering or blocking hover events */}
+      {activeInfoWindowProperty && (
+        <InfoWindow
+          position={{
+            lat: activeInfoWindowProperty.latitude,
+            lng: activeInfoWindowProperty.longitude,
+          }}
+          pixelOffset={[0, -38]} // Floats directly above the pin height
+          onCloseClick={() => {
+            onSelectProperty(null);
+            onHoverProperty(null);
+          }}
+        >
+          <div
+            style={{
+              padding: "4px",
+              maxWidth: "220px",
+              color: "#111",
+              fontFamily: "sans-serif",
+              pointerEvents: isHoverOnly ? "none" : "auto", // Prevents hover card from stealing mouse cursor focus
+            }}
+          >
+            <h4 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "bold" }}>
+              {activeInfoWindowProperty.title}
+            </h4>
+            <p style={{ margin: "2px 0", fontSize: "12px", color: "#555" }}>
+              📍 {activeInfoWindowProperty.formattedAddress || "N/A"}
+            </p>
+            <p style={{ margin: "4px 0", fontSize: "13px", fontWeight: "bold", color: "#0056b3" }}>
+              {activeInfoWindowProperty.price}
+            </p>
+            {activeInfoWindowProperty.availableUnits !== undefined && (
+              <p style={{ margin: "2px 0", fontSize: "11px", color: "#28a745", fontWeight: 600 }}>
+                {activeInfoWindowProperty.availableUnits} / {activeInfoWindowProperty.totalUnits || "--"} units available
+              </p>
+            )}
+          </div>
+        </InfoWindow>
+      )}
 
       {circleCenter && (
         <Circle
@@ -951,160 +558,185 @@ const PropertyMarkers = ({ properties }) => {
   );
 };
 
-
-
-
-
 /* ============================================================
    MAIN COMPONENT
 ============================================================ */
 
-const SetPoiMarkers = () => {
+const SetPoiMarkers: React.FC = () => {
   const GOOGLE_MAPS_API_KEY =
+    process.env.REACT_APP_GOOGLE_MAPS_API_KEY ||
     process.env.GOOGLE_MAPS_API_KEY ||
-    "AIzaSyC61R7BevXG7uOoAAWEaxSoDYs0ldNwrT4";
+    "";
 
-  const [properties, setProperties] = useState([]);
-  const [searchLocation, setSearchLocation] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [properties, setProperties] = useState<PropertyListing[]>([]);
+  const [selectedProperty, setSelectedProperty] = useState<PropertyListing | null>(null);
+  const [hoveredProperty, setHoveredProperty] = useState<PropertyListing | null>(null);
+  const [searchLocation, setSearchLocation] = useState<SelectedLocation | null>(null);
+  const [mapBounds, setMapBounds] = useState<google.maps.LatLngBounds | null>(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // /* Fetch properties */
-  // useEffect(() => {
-  //   const fetchProperties = async () => {
-  //     setIsLoading(true);
+  /* ==========================================================
+     FETCH PROPERTIES FROM PUBLIC LISTINGS ENDPOINT
+  ========================================================== */
 
-  //     try {
-  //       const dbRecords = [
-  //         {
-  //           id: "prop1",
-  //           title: "Kilimani Heights",
-  //           latitude: -1.2884,
-  //           longitude: 36.7822,
-  //           price: "KES 45,000",
-  //           formattedAddress: "Kilimani",
-  //         },
-  //         {
-  //           id: "prop2",
-  //           title: "Westlands Suites",
-  //           latitude: -1.2676,
-  //           longitude: 36.8121,
-  //           price: "KES 60,000",
-  //           formattedAddress: "Westlands",
-  //         },
-  //         {
-  //           id: "prop3",
-  //           title: "Kericho Plaza",
-  //           latitude: -0.3689,
-  //           longitude: 35.2863,
-  //           price: "KES 25,000",
-  //           formattedAddress: "Kericho",
-  //         },
-  //       ];
-
-  //       const saved = localStorage.getItem("propertylocation");
-
-  //       if (saved) {
-  //         const draft = JSON.parse(saved);
-
-  //         if (draft.latitude && draft.longitude) {
-  //           dbRecords.push({
-  //             id: "draft",
-  //             title: "Pinned Draft Property",
-  //             latitude: draft.latitude,
-  //             longitude: draft.longitude,
-  //             formattedAddress: draft.formattedAddress,
-  //             price: "KES --",
-  //           });
-  //         }
-  //       }
-
-  //       setProperties(dbRecords);
-  //     } catch (err) {
-  //       console.error(err);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchProperties();
-  // }, []);
-
-
-
-
-  /* Fetch properties from Backend DB + Local Drafts */
   useEffect(() => {
     const fetchProperties = async () => {
       setIsLoading(true);
+      let fetchedRecords: PropertyListing[] = [];
 
       try {
-        // 1. Fetch properties from your API endpoint
-        const response = await fetch("/api/properties"); // Replace with your actual endpoint or axios call
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const response = await fetch("http://localhost:8000/api/public/listings/properties");
 
-        const data = await response.json();
+        if (response.ok) {
+          const contentType = response.headers.get("content-type");
 
-        // 2. Map database fields to ensure standard property structure and numeric coordinates
-        const dbRecords = data.map((item) => ({
-          id: item.id || item._id,
-          title: item.title || item.propertyName || "Untitled Property",
-          latitude: parseFloat(item.latitude || item.lat),
-          longitude: parseFloat(item.longitude || item.lng),
-          price: item.price ? `KES ${Number(item.price).toLocaleString()}` : "KES --",
-          formattedAddress: item.formattedAddress || item.address || "",
-        }));
+          if (contentType && contentType.includes("application/json")) {
+            const body = await response.json();
 
-        // 3. Preserve the localStorage draft overlay from the PMS pinning wizard
-        const saved = localStorage.getItem("propertylocation");
+            const rawItems = Array.isArray(body.data)
+              ? body.data
+              : Array.isArray(body)
+              ? body
+              : [];
 
-        if (saved) {
-          try {
-            const draft = JSON.parse(saved);
+            fetchedRecords = rawItems
+              .map((item: any): PropertyListing => {
+                const latitude = parseFloat(
+                  item.property_latitude ?? item.latitude ?? item.lat
+                );
 
-            if (draft.latitude && draft.longitude) {
-              dbRecords.push({
-                id: "draft_pinned_property",
-                title: "Newly Pinned Property (Draft)",
-                latitude: parseFloat(draft.latitude),
-                longitude: parseFloat(draft.longitude),
-                formattedAddress: draft.formattedAddress || "Pinned Location",
-                price: "KES --",
-              });
-            }
-          } catch (e) {
-            console.error("Error parsing local draft property location:", e);
+                const longitude = parseFloat(
+                  item.property_longitude ?? item.longitude ?? item.lng
+                );
+
+                const rawPrice = item.prices_per_unit || item.price;
+                let formattedPrice = "KES --";
+
+                if (Array.isArray(rawPrice) && rawPrice.length > 0) {
+                  const formattedNumbers = rawPrice
+                    .map((p) => Number(p).toLocaleString())
+                    .join(", ");
+                  formattedPrice = `KES ${formattedNumbers}`;
+                } else if (rawPrice) {
+                  formattedPrice = `KES ${Number(rawPrice).toLocaleString()}`;
+                }
+
+                return {
+                  id:
+                    item.property_id ||
+                    item.id ||
+                    item._id ||
+                    `property-${Math.random()}`,
+
+                  title:
+                    item.property_name ||
+                    item.title ||
+                    item.propertyName ||
+                    "Untitled Property",
+
+                  latitude,
+                  longitude,
+
+                  price: formattedPrice,
+
+                  formattedAddress:
+                    item.property_address ||
+                    item.formattedAddress ||
+                    item.address ||
+                    "",
+
+                  availableUnits:
+                    item.available_units ?? item.availableUnits,
+
+                  totalUnits:
+                    item.total_units ?? item.totalUnits,
+
+                  images: item.images || [],
+                };
+              })
+              .filter(
+                (item: PropertyListing) =>
+                  Number.isFinite(item.latitude) &&
+                  Number.isFinite(item.longitude)
+              );
           }
         }
-
-        setProperties(dbRecords);
       } catch (err) {
-        console.error("Failed to load properties from DB:", err);
-      } finally {
-        setIsLoading(false);
+        console.warn("Public listings API request failed, checking local drafts...", err);
       }
+
+      /* Local Storage Draft Fallback */
+      const saved = localStorage.getItem("propertylocation");
+      if (saved) {
+        try {
+          const draft = JSON.parse(saved);
+          if (draft.latitude !== undefined && draft.longitude !== undefined) {
+            const latitude = parseFloat(draft.latitude);
+            const longitude = parseFloat(draft.longitude);
+
+            if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+              fetchedRecords.push({
+                id: "draft_pinned_property",
+                title: "Newly Pinned Property (Draft)",
+                latitude,
+                longitude,
+                formattedAddress: draft.formattedAddress || "Pinned Location",
+                price: "KES --",
+                images: [],
+              });
+            }
+          }
+        } catch (e) {
+          console.error("Error parsing local draft property location:", e);
+        }
+      }
+
+      setProperties(fetchedRecords);
+      setIsLoading(false);
     };
 
     fetchProperties();
   }, []);
 
-  /* Place Picker */
-  const handlePlaceChange = (e) => {
-    const place = e.target?.value;
+  /* ==========================================================
+     DYNAMIC SIDEBAR FILTERING
+  ========================================================== */
 
-    if (!place?.location) return;
+  const visibleProperties = properties.filter((prop) => {
+    if (!mapBounds) return true;
+    const pos = new google.maps.LatLng(prop.latitude, prop.longitude);
+    return mapBounds.contains(pos);
+  });
+
+  /* ==========================================================
+     HANDLERS
+  ========================================================== */
+
+  const handlePlaceSelect = useCallback((location: SelectedLocation) => {
+    if (!location) return;
+    if (typeof location.lat !== "number" || typeof location.lng !== "number") return;
 
     setSearchLocation({
-      lat: place.location.lat(),
-      lng: place.location.lng(),
+      lat: location.lat,
+      lng: location.lng,
+      displayName: location.displayName || "",
+      formattedAddress: location.formattedAddress || "",
+      viewport: location.viewport || null,
+    });
+  }, []);
+
+  const handleCardClick = (prop: PropertyListing) => {
+    setSelectedProperty(prop);
+    setSearchLocation({
+      lat: prop.latitude,
+      lng: prop.longitude,
     });
   };
 
-  const handleWholeMapClick = useCallback((event) => {
-    console.log("Map clicked:", event.detail.latLng);
-  }, []);
+  /* ==========================================================
+     RENDER
+  ========================================================== */
 
   return (
     <PageContainer>
@@ -1119,38 +751,88 @@ const SetPoiMarkers = () => {
         </AuthNavGroup>
       </TopNavbar>
 
-      <MainContent>
-        <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-          <APILoader apiKey={GOOGLE_MAPS_API_KEY}>
-            <SearchOverlay>
-              <PlacePicker onPlaceChange={handlePlaceChange} />
-            </SearchOverlay>
-          </APILoader>
+      <APIProvider apiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
+        <MainContent>
+          {/* Side-by-Side Cards List */}
+          <SidebarContainer isCollapsed={isSidebarCollapsed}>
+            <Sidebar isCollapsed={isSidebarCollapsed}>
+              <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.1rem", color: "#111" }}>
+                Properties in view ({visibleProperties.length})
+              </h3>
 
+              {visibleProperties.map((prop) => {
+                const isSelected = selectedProperty?.id === prop.id;
+                const isHovered = hoveredProperty?.id === prop.id;
+
+                return (
+                  <PropertyCard
+                    key={prop.id}
+                    isSelected={isSelected}
+                    isHovered={isHovered}
+                    onClick={() => handleCardClick(prop)}
+                    onMouseEnter={() => setHoveredProperty(prop)}
+                    onMouseLeave={() => setHoveredProperty(null)}
+                  >
+                    <h4 style={{ margin: "0 0 4px 0", fontSize: "0.95rem", color: "#1f2937" }}>
+                      {prop.title}
+                    </h4>
+                    <p style={{ margin: "0 0 6px 0", fontSize: "0.8rem", color: "#6b7280" }}>
+                      📍 {prop.formattedAddress || "Location provided on inquiry"}
+                    </p>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontWeight: "bold", color: "#0056b3", fontSize: "0.85rem" }}>
+                        {prop.price}
+                      </span>
+                      {prop.availableUnits !== undefined && (
+                        <span style={{ fontSize: "0.75rem", background: "#e5e7eb", color: "#374151", padding: "2px 6px", borderRadius: "4px" }}>
+                          {prop.availableUnits} avail.
+                        </span>
+                      )}
+                    </div>
+                  </PropertyCard>
+                );
+              })}
+            </Sidebar>
+
+            {/* Sidebar Collapse Toggle Arrow */}
+            <CollapseToggleButton
+              isCollapsed={isSidebarCollapsed}
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isSidebarCollapsed ? "▶" : "◀"}
+            </CollapseToggleButton>
+          </SidebarContainer>
+
+          {/* Map View Area */}
           <Rendermap>
+            <SearchOverlay>
+              <PlaceSearchInput onPlaceSelect={handlePlaceSelect} />
+            </SearchOverlay>
+
             <Map
               defaultZoom={7}
               defaultCenter={{ lat: -1.286389, lng: 36.817223 }}
-              mapId="RENTSURE_PUBLIC_MAP"
               gestureHandling="greedy"
               disableDefaultUI={false}
-              onCameraChanged={(evt) =>
-                console.log("Camera:", evt.detail.center)
-              }
-              onClick={handleWholeMapClick}
-              mapTypeId={"hybrid"}
+              mapTypeId="hybrid"
+              mapId="a99c0ae2ccbc0904"
             >
               <PanMapToSelectedLocation location={searchLocation} />
-
-              <PropertyMarkers properties={properties} />
+              <ViewportTracker onBoundsChange={setMapBounds} />
+              <PropertyMarkers
+                properties={visibleProperties}
+                selectedProperty={selectedProperty}
+                hoveredProperty={hoveredProperty}
+                onSelectProperty={setSelectedProperty}
+                onHoverProperty={setHoveredProperty}
+              />
             </Map>
           </Rendermap>
 
-          {isLoading && (
-            <LoadingOverlay>Loading properties...</LoadingOverlay>
-          )}
-        </APIProvider>
-      </MainContent>
+          {isLoading && <LoadingOverlay>Loading properties...</LoadingOverlay>}
+        </MainContent>
+      </APIProvider>
     </PageContainer>
   );
 };
