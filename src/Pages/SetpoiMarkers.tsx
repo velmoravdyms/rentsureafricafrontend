@@ -817,6 +817,10 @@ const SetPoiMarkers: React.FC = () => {
               disableDefaultUI={false}
               mapTypeId="hybrid"
               mapId="a99c0ae2ccbc0904"
+              mapTypeControl={true}
+              mapTypeControlOptions={{
+                position: google.maps.ControlPosition.TOP_RIGHT,
+              }}
             >
               <PanMapToSelectedLocation location={searchLocation} />
               <ViewportTracker onBoundsChange={setMapBounds} />
